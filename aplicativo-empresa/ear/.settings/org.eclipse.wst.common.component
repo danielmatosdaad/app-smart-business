@@ -11,5 +11,8 @@
         <dependent-module archiveName="app-smart-business-servidor.jar" deploy-path="/" handle="module:/resource/app-smart-business-servidor/app-smart-business-servidor">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="app-smart-business-common.jar" deploy-path="/lib" handle="module:/resource/app-smart-business-common/app-smart-business-common">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
     </wb-module>
 </project-modules>
