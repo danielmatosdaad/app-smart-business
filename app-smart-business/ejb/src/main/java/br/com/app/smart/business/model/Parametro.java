@@ -1,5 +1,6 @@
 package br.com.app.smart.business.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -7,19 +8,25 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.jboss.logging.processor.util.Objects.ToStringBuilder;
 
 @Entity(name = "parametro")
-public class Parametro implements Entidade {
+@XmlRootElement
+@Table(name = "parametro", uniqueConstraints = @UniqueConstraint(columnNames = "nome"))
+public class Parametro implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-
 	@Id
 	@GeneratedValue
-	private int id;
+	private Long id;
 
 	private String nome;
 	private String descricao;
@@ -29,11 +36,11 @@ public class Parametro implements Entidade {
 	@Enumerated(EnumType.STRING)
 	private TipoParametro tipoParametro;
 
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -75,6 +82,16 @@ public class Parametro implements Entidade {
 
 	public void setDataAlteracao(Date dataAlteracao) {
 		this.dataAlteracao = dataAlteracao;
+	}
+
+	@Override
+	public String toString() {
+		System.out.println(this.getId());
+		System.out.println(this.getNome());
+		System.out.println(this.getDataAlteracao());
+		System.out.println(this.getDescricao());
+		System.out.println(this.getTipoParametro());
+		return super.toString();
 	}
 
 }

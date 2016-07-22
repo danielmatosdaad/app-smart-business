@@ -18,6 +18,7 @@ package br.com.app.smart.business.app_smart_business.test;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -27,42 +28,59 @@ import org.jboss.arquillian.junit.Arquillian;
 
 import br.com.app.smart.business.model.Member;
 import br.com.app.smart.business.service.MemberRegistration;
-import br.com.app.smart.business.util.Resources;
-
+import br.com.app.smart.business.util.PackageUtil;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
 public class MemberRegistrationTest {
-    @Deployment
-    public static Archive<?> createTestArchive() {
-        return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClasses(Member.class, MemberRegistration.class, Resources.class)
-                .addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
-                // Deploy our test datasource
-                .addAsWebInfResource("test-ds.xml", "test-ds.xml");
-    }
+	@Deployment
+	public static Archive<?> createTestArchive() {
 
-    @Inject
-    MemberRegistration memberRegistration;
+		PomEquippedResolveStage pom = Maven.resolver().loadPomFromFile("pom.xml");
 
-    @Inject
-    Logger log;
+		File[] libs = pom.resolve("br.com.app.smart.business:app-smart-business-common:0.0.1-SNAPSHOT")
+				.withClassPathResolution(true).withTransitivity().asFile();
 
-    @Test
-    public void testRegister() throws Exception {
-        Member newMember = new Member();
-        newMember.setName("Jane Doe");
-        newMember.setEmail("jane@mailinator.com");
-        newMember.setPhoneNumber("2125551234");
-        memberRegistration.register(newMember);
-        assertNotNull(newMember.getId());
-        log.info(newMember.getName() + " was persisted with id " + newMember.getId());
-    }
+		WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war").addAsLibraries(libs)
+				.addPackage(PackageUtil.BUILDER_INFRA.getPackageName())
+				.addPackage(PackageUtil.CONVERSORES.getPackageName())
+				.addPackage(PackageUtil.ENUMS.getPackageName())
+				.addPackage(PackageUtil.EXCEPTION.getPackageName())
+				.addPackage(PackageUtil.MODEL.getPackageName())
+				.addPackage(PackageUtil.SERVICE.getPackageName())
+				.addPackage(PackageUtil.UTIL.getPackageName())
+				.addPackage(PackageUtil.DATA.getPackageName())
+				.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
+				.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+				.addAsWebInfResource("test-ds.xml", "test-ds.xml");
+
+		System.out.println(war.toString(true));
+
+		return war;
+	}
+
+	@Inject
+	MemberRegistration memberRegistration;
+
+	@Inject
+	Logger log;
+
+	@Test
+	public void testRegister() throws Exception {
+		Member newMember = new Member();
+		newMember.setName("Jane Doe");
+		newMember.setEmail("jane@mailinator.com");
+		newMember.setPhoneNumber("2125551234");
+		memberRegistration.register(newMember);
+		assertNotNull(newMember.getId());
+		log.info(newMember.getName() + " was persisted with id " + newMember.getId());
+	}
 
 }

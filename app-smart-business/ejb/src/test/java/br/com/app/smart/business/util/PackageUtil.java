@@ -9,6 +9,7 @@ public enum PackageUtil {
 	EXCEPTION("br.com.app.smart.business.exception"),
 	MODEL("br.com.app.smart.business.model"),
 	SERVICE("br.com.app.smart.business.service"),
+	FACEDE("br.com.app.smart.business.dao.facede"),
 	UTIL("br.com.app.smart.business.util");
 	
 	private String packageName;

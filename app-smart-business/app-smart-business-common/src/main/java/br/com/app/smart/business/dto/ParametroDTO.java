@@ -8,18 +8,18 @@ public class ParametroDTO implements DTO {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int id;
+	private Long id;
 	private String nome;
 	private String descricao;
 	private Date dataInclusao;
 	private Date dataAlteracao;
 	private TipoParametroDTO tipoParametro;
 
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
