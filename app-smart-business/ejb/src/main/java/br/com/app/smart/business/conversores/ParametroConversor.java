@@ -13,11 +13,9 @@ public class ParametroConversor implements IConversorEntidadeDTO<Parametro, Para
 
 		try {
 
-			FabricaGenericaDados<ParametroDTO> fabrica = new FabricaGenericaDados<ParametroDTO>(
-					ParametroDTO.class);
-			ParametroDTO dto = fabrica.transferirDados(entidade);
+			ParametroDTO dtoConvertido = FabricaGenericaDados.transferirDados(ParametroDTO.class, entidade);
 
-			return dto;
+			return dtoConvertido;
 
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -30,9 +28,7 @@ public class ParametroConversor implements IConversorEntidadeDTO<Parametro, Para
 	public Parametro converterParaEntidade(ParametroDTO dto) {
 		try {
 
-			FabricaGenericaDados<Parametro> fabrica = new FabricaGenericaDados<Parametro>(
-					Parametro.class);
-			Parametro entidade = fabrica.transferirDados(dto);
+			Parametro entidade = FabricaGenericaDados.transferirDados(Parametro.class, dto);
 
 			return entidade;
 

@@ -9,6 +9,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -30,7 +32,11 @@ public class Parametro implements Serializable {
 
 	private String nome;
 	private String descricao;
+	
+	@Temporal(TemporalType.DATE)
 	private Date dataInclusao;
+	
+	@Temporal(TemporalType.DATE)
 	private Date dataAlteracao;
 
 	@Enumerated(EnumType.STRING)

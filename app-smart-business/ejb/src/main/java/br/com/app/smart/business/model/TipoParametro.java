@@ -1,6 +1,8 @@
 package br.com.app.smart.business.model;
 
-public enum TipoParametro {
+import java.io.Serializable;
+
+public enum TipoParametro implements Serializable {
 
 	CARACTER(1), NUMERAL(2), FLUTUANTE(3), DATA(4), DATAHORA(5);
 

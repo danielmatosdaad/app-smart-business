@@ -1,8 +1,9 @@
 package br.com.app.smart.business.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class ParametroDTO implements DTO {
+public class ParametroDTO implements DTO ,Serializable{
 
 	/**
 	 * 

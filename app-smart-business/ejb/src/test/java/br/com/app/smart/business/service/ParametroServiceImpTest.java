@@ -1,15 +1,12 @@
 package br.com.app.smart.business.service;
 
-import static org.junit.Assert.assertNotNull;
-
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
-
+import java.util.List;
 import java.util.logging.Logger;
 
+import javax.ejb.EJB;
 import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -25,7 +22,8 @@ import org.junit.runner.RunWith;
 import br.com.app.smart.business.dto.ParametroDTO;
 import br.com.app.smart.business.dto.TipoParametroDTO;
 import br.com.app.smart.business.exception.InfraEstruturaException;
-import br.com.app.smart.business.model.Parametro;
+import br.com.app.smart.business.exception.NegocioException;
+import br.com.app.smart.business.interfaces.IServicoPadraoBD;
 import br.com.app.smart.business.util.PackageUtil;
 
 @RunWith(Arquillian.class)
@@ -54,17 +52,17 @@ public class ParametroServiceImpTest {
 		return war;
 	}
 
-	@Inject
-	ParametroServiceImp parametroServiceImp;
+	@EJB(beanName="ParametroServiceImp")
+	private IServicoPadraoBD<ParametroDTO> parametroServiceImp;
 
 	@Inject
-	Logger log;
+	private Logger log;
 
 	@Test
 	public void crud() {
 
 		try {
-			
+
 			ParametroDTO dto = new ParametroDTO();
 			dto.setId(null);
 			dto.setNome("nome");
@@ -72,13 +70,47 @@ public class ParametroServiceImpTest {
 			dto.setDataInclusao(new Date());
 			dto.setDescricao("descricao");
 			dto.setTipoParametro(TipoParametroDTO.CARACTER);
-			parametroServiceImp.registrar(dto);
-			ParametroDTO resutaldoBusca = parametroServiceImp.buscarPorId(1L);
+
+			ParametroDTO dto2 = new ParametroDTO();
+			dto2.setId(null);
+			dto2.setNome("nome2");
+			dto2.setDataAlteracao(new Date());
+			dto2.setDataInclusao(new Date());
+			dto2.setDescricao("descricao2");
+			dto2.setTipoParametro(TipoParametroDTO.NUMERAL);
+
+			dto = parametroServiceImp.adiconar(dto);
+
+			ParametroDTO resutaldoBusca = parametroServiceImp.bustarPorID(dto.getId());
 			Assert.assertNotNull(resutaldoBusca);
-			parametroServiceImp.remover(resutaldoBusca);
-			log.info("Gravado com sucesso.");
-			
+
+			dto2 = parametroServiceImp.adiconar(dto2);
+			ParametroDTO resutaldoBusca2 = parametroServiceImp.bustarPorID(dto2.getId());
+			Assert.assertNotNull(resutaldoBusca2);
+
+			List<ParametroDTO> todos = parametroServiceImp.bustarTodos();
+			Assert.assertNotNull(todos);
+			Assert.assertTrue(todos.size() == 2);
+
+			int range[] = { 0, 2 };
+			List<ParametroDTO> todosIntervalo = parametroServiceImp.bustarPorIntervaloID(range);
+			Assert.assertNotNull(todosIntervalo);
+			Assert.assertTrue(todosIntervalo.size() == 2);
+
+			resutaldoBusca2.setNome("nome alterado");
+
+			ParametroDTO resutaldoBusca3 = parametroServiceImp.alterar(resutaldoBusca2);
+			Assert.assertEquals(resutaldoBusca2.getNome(), resutaldoBusca3.getNome());
+
+			parametroServiceImp.remover(resutaldoBusca3);
+
+			ParametroDTO dto4 = parametroServiceImp.bustarPorID(100L);
+			Assert.assertNull(dto4);
+
 		} catch (InfraEstruturaException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NegocioException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -88,12 +120,14 @@ public class ParametroServiceImpTest {
 	@Test
 	public void buscarIdNaoExistente() {
 
-		ParametroDTO dto;
 		try {
-			dto = parametroServiceImp.buscarPorId(100L);
+			ParametroDTO dto = parametroServiceImp.bustarPorID(100L);
 			Assert.assertNull(dto);
-			log.info("buscado com sucesso.");
+
 		} catch (InfraEstruturaException e) {
+			e.printStackTrace();
+		} catch (NegocioException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

@@ -45,6 +45,10 @@ public class ParametroFacade extends AbstractFacade<Parametro> {
 		Root<Parametro> parametro = criteria.from(Parametro.class);
 		CriteriaQuery<Parametro> todos = criteria.select(parametro);
 		TypedQuery<Parametro> allQuery = em.createQuery(todos);
-		return allQuery.getResultList();
+		
+		List<Parametro> resultado = allQuery.getResultList();
+		
+		System.out.println("Quantidade todos? " + resultado.size());
+		return resultado;
 	}
 }

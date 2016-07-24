@@ -6,6 +6,8 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
+import br.com.app.smart.business.model.Contato;
+
 public abstract class AbstractFacade<T> {
 
 	@Inject
@@ -22,28 +24,35 @@ public abstract class AbstractFacade<T> {
 	public T registrar(T entity) {
 		log.info("Registrando...");
 		getEntityManager().persist(entity);
-		log.info("Registrando Sucesso");
+		log.info("Registrado Sucesso");
 		return entity;
+	}
+
+	public void registrarLista(List<T> list) {
+
+		for (T t : list) {
+			registrar(t);
+		}
 	}
 
 	public T editar(T entity) {
 		log.info("Editando...");
 		getEntityManager().merge(entity);
-		log.info("Editando Sucesso");
-		
+		log.info("Editado Sucesso");
+
 		return entity;
 	}
 
 	public void remover(T entity) {
 		log.info("Removendo...");
 		getEntityManager().remove(getEntityManager().merge(entity));
-		log.info("Removendo Sucesso");
+		log.info("Removido Sucesso");
 	}
 
 	public T buscar(Object id) {
 		log.info("Buscando...");
 		T resultado = getEntityManager().find(entityClass, id);
-		log.info("Buscando Sucesso");
+		log.info("Buscado Sucesso");
 		return resultado;
 
 	}
@@ -55,7 +64,7 @@ public abstract class AbstractFacade<T> {
 
 		List<T> resultado = getEntityManager().createQuery(cq).getResultList();
 
-		log.info("Buscando Todos Sucesso");
+		log.info("Buscado Todos sucesso, quantidade: " + resultado.size());
 		return resultado;
 	}
 
@@ -67,22 +76,23 @@ public abstract class AbstractFacade<T> {
 		javax.persistence.Query q = getEntityManager().createQuery(cq);
 		q.setMaxResults(range[1] - range[0]);
 		q.setFirstResult(range[0]);
-		
+
 		List<T> resultado = q.getResultList();
-		log.info("Buscando por intervalo sucesso");
+		log.info("Buscado por intervalo sucesso, quantidade: " + resultado.size());
 		return resultado;
 	}
 
 	public long count() {
-		
+
 		log.info("Contando ...");
-		
+
 		javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
 		javax.persistence.criteria.Root<T> rt = cq.from(entityClass);
 		cq.select(getEntityManager().getCriteriaBuilder().count(rt));
 		javax.persistence.Query q = getEntityManager().createQuery(cq);
-		long resultado =  ((Long) q.getSingleResult()).longValue();
-		log.info("Contando sucesso");
+		long resultado = ((Long) q.getSingleResult()).longValue();
+		log.info("Contado sucesso");
 		return resultado;
 	}
+
 }
