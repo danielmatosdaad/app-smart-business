@@ -7,25 +7,35 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.logging.Logger;
 
+import br.com.app.smart.business.databuilder.FuncionalidadeBuilder;
+import br.com.app.smart.business.databuilder.GrupoFuncionalidadeBuilder;
+import br.com.app.smart.business.databuilder.FuncionalidadeBuilder.TipoFuncionalidadeBuilder;
+import br.com.app.smart.business.databuilder.GrupoFuncionalidadeBuilder.GrupoTipoFuncionalidadeBuilder;
 import br.com.app.smart.business.dto.ContatoDTO;
+import br.com.app.smart.business.dto.FuncionalidadeDTO;
+import br.com.app.smart.business.dto.GrupoFuncionalidadeDTO;
+import br.com.app.smart.business.dto.MetaDadoDTO;
 import br.com.app.smart.business.dto.ParametroDTO;
 import br.com.app.smart.business.dto.RegistroAuditoriaDTO;
 import br.com.app.smart.business.dto.SenhaDTO;
 import br.com.app.smart.business.dto.StatusSenhaDTO;
 import br.com.app.smart.business.dto.StatusUsuarioDTO;
+import br.com.app.smart.business.dto.TelaDTO;
 import br.com.app.smart.business.dto.TipoContatoDTO;
 import br.com.app.smart.business.dto.TipoParametroDTO;
 import br.com.app.smart.business.dto.UsuarioDTO;
 import br.com.app.smart.business.exception.InfraEstruturaException;
+import br.com.app.smart.business.model.Funcionalidade;
+import br.com.app.smart.business.model.GrupoFuncionalidade;
+import br.com.app.smart.business.model.MetaDado;
 import br.com.app.smart.business.model.Parametro;
+//import br.com.app.smart.business.model.Tela;
 import br.com.app.smart.business.model.Usuario;
 
 @Named
@@ -33,28 +43,33 @@ public class FabricaGenericaDados {
 
 	@Inject
 	private static Logger log;
-	private Class<?> classe;
 
 	public static <T> T criarInstancia(Class<T> clazz, Object... objetos) throws InfraEstruturaException {
 
 		try {
 
-			List<Class> classesParametros = new ArrayList<Class>();
+			List<Class<T>> classesParametros = new ArrayList<Class<T>>();
 
 			for (Object object : objetos) {
 
-				classesParametros.add(object.getClass());
+				classesParametros.add((Class<T>) object.getClass());
 			}
 
-			Class[] arrayClass = (Class[]) classesParametros.toArray();
-			Constructor construtor = clazz.getDeclaredConstructor(arrayClass);
-			T instancia = (T) construtor.newInstance(objetos);
+			Class[] arrayClass = new Class[classesParametros.size()];
+			classesParametros.toArray(arrayClass);
+			System.out.println(arrayClass.toString());
+			Constructor<T> construtor = clazz.getDeclaredConstructor(arrayClass);
+			T instancia = construtor.newInstance(objetos);
+			return instancia;
 
+		} catch (ClassCastException cce) {
+
+			log.log(java.util.logging.Level.SEVERE, "", cce);
+			throw new InfraEstruturaException(cce);
 		} catch (Exception e) {
 			log.log(java.util.logging.Level.SEVERE, "", e);
 			throw new InfraEstruturaException(e);
 		}
-		return null;
 
 	}
 
@@ -71,15 +86,15 @@ public class FabricaGenericaDados {
 	public static <T> List<T> createListOfType(Class<T> type) {
 		return new ArrayList<T>();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static <T> List<T> transferirListaDados(Class<T> clazzQueReceberaDados, List lista)
 			throws InfraEstruturaException {
 
 		List<T> listaResultado = new ArrayList<T>();
-		
+
 		for (Object object : lista) {
-			
+
 			listaResultado.add(trataDados(clazzQueReceberaDados, object));
 		}
 		return listaResultado;
@@ -90,12 +105,13 @@ public class FabricaGenericaDados {
 			throws InfraEstruturaException {
 
 		return trataDados(clazzQueReceberaDados, dadosParaTransferir);
+	
 	}
 
 	private static <T> T trataDados(Class<T> clazzQueReceberaDados, Object dadosParaTransferir)
 			throws InfraEstruturaException {
 		try {
-
+			
 			if (dadosParaTransferir == null) {
 				return null;
 			}
@@ -127,15 +143,23 @@ public class FabricaGenericaDados {
 
 				if (List.class.isAssignableFrom(field.getType())) {
 
+					if (value instanceof List) {
+						List lista = (List) value;
+
+						if (lista.size() == 0) {
+							System.out.println("lista vazia");
+							continue;
+
+						}
+					}
 					Object lista = tratarLista(instancia, field, value);
-					//System.out.println(field.getName() + "=" + lista);
 					setDado(instancia, field.getName(), lista, instancia.getClass());
 					continue;
 
 				}
 
 				if (value != null) {
-					//System.out.println(field.getName() + "=" + value);
+					System.out.println(field.getName() + "=" + value);
 					set(instancia, field.getName(), value);
 				}
 			}
@@ -149,15 +173,15 @@ public class FabricaGenericaDados {
 
 	private static List tratarLista(Object instancia, Field field, Object value) throws NoSuchFieldException,
 			NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		//System.out.println("O atributo eh uma lista");
+		System.out.println("O atributo eh uma lista");
 		Field fieldInstance = instancia.getClass().getDeclaredField(field.getName());
 		ParameterizedType genericType = (ParameterizedType) fieldInstance.getGenericType();
 		Class<?> parametroLista = (Class<?>) genericType.getActualTypeArguments()[0];
-		//System.out.println("Tipo da lista: " + parametroLista);
+		System.out.println("Tipo da lista: " + parametroLista);
 
 		List listQueReceberaDados = createListOfType(parametroLista);
 		List listAserTransferida = (List) value;
-
+		System.out.println("tamanho da lista a ser transferida:" + listAserTransferida.size());
 		for (Object object : listAserTransferida) {
 
 			try {
@@ -170,13 +194,12 @@ public class FabricaGenericaDados {
 			}
 
 		}
-		
+
 		return listQueReceberaDados;
 	}
 
 	private static Enum<?> tratarEnum(Object instancia, Field field, Object value) throws InfraEstruturaException {
 
-		Integer valor = (Integer) get(value, "value");
 		String nomeAtributo = field.getName();
 		String nameEnum = value.toString();
 		Field enumFild = null;
@@ -201,9 +224,11 @@ public class FabricaGenericaDados {
 		try {
 
 			Inicio: {// verificar os tipos
-
-				if (object.getClass().getDeclaredField(fieldName).getType().getName()
-						.equals(fieldValue.getClass().getName())) {
+				// System.out.println("--------------------------");
+				// System.out.println(object.getClass().getName());
+				// System.out.println(fieldName);
+				// System.out.println(fieldValue.getClass().getName());
+				if (isTipoIguais(object, fieldName, fieldValue)) {
 
 					setDado(object, fieldName, fieldValue, clazz);
 					return true;
@@ -222,6 +247,76 @@ public class FabricaGenericaDados {
 			return false;
 		}
 		return false;
+	}
+
+	public static boolean verificaPrimitivo(Type tipo) {
+
+		if (tipo == char.class) {
+			return true;
+		} else if (tipo == byte.class) {
+			return true;
+		} else if (tipo == short.class) {
+			return true;
+		} else if (tipo == int.class) {
+			return true;
+		} else if (tipo == long.class) {
+			return true;
+		} else if (tipo == float.class) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private static boolean isPrimitivosIguais(Object object, String fieldName, Object fieldValue)
+			throws NoSuchFieldException {
+
+		try {
+			if (object.getClass().getDeclaredField(fieldName).getType().isPrimitive()) {
+
+				return true;
+			}
+		} catch (Exception e) {
+			// bloco seguro, pois posso estar testando um privimito como fosse
+			// objeto
+		}
+
+		try {
+			if (fieldValue.getClass().getDeclaredField(fieldName).getType().isPrimitive()) {
+
+				return true;
+			}
+		} catch (Exception e) {
+			// bloco seguro, pois posso estar testando um privimito como fosse
+			// objeto
+		}
+
+		if (fieldValue instanceof Number) {
+
+			return true;
+		}
+		if (fieldValue instanceof Character) {
+
+			return true;
+		}
+
+		if (fieldValue instanceof Byte) {
+
+			return true;
+		}
+		return false;
+	}
+
+	private static boolean isTipoIguais(Object object, String fieldName, Object fieldValue)
+			throws NoSuchFieldException {
+
+		if (isPrimitivosIguais(object, fieldName, fieldValue)) {
+			// System.out.println("PRIMITIVO");
+			return true;
+		}
+		// System.out.println("NAO PRIMITIVO");
+		return object.getClass().getDeclaredField(fieldName).getType().getName()
+				.equals(fieldValue.getClass().getName());
 	}
 
 	private static void setDado(Object object, String fieldName, Object fieldValue, Class<?> clazz)
@@ -250,8 +345,78 @@ public class FabricaGenericaDados {
 
 	public static void main(String args[]) throws InfraEstruturaException {
 
-		testParametro();
-		testUsuario();
+		// testParametro();
+		// testUsuario();
+		// testeMetadado();
+		// testeTela();
+		testeFuncionalidadeDTO();
+
+	}
+
+	private static void testeFuncionalidadeDTO() throws InfraEstruturaException {
+
+		Funcionalidade e1 = new Funcionalidade();
+		e1.setId(1L);
+		e1.setNomeFuncionalidade("Manter Usuario");
+		e1.setDescricao("Possibilita realizar alguma coisa1");
+
+		List<Funcionalidade> lista2 = new ArrayList<Funcionalidade>();
+		lista2.add(e1);
+		GrupoFuncionalidade g1 = new GrupoFuncionalidade();
+		g1.setId(1L);
+		g1.setNomeGrupoFuncionalidade("Usuario2");
+		g1.setDescricao("Possibilita realizar alguma coisa2");
+		g1.setFuncionalidades(lista2);
+
+		e1.setGrupoFuncionalidade(g1);
+		List<Funcionalidade> lista = new ArrayList<Funcionalidade>();
+		lista.add(e1);
+		List<FuncionalidadeDTO> listaDTO = new ArrayList<FuncionalidadeDTO>();
+
+		for (Funcionalidade Funcionalidade : lista) {
+			FuncionalidadeDTO dto = FabricaGenericaDados.transferirDados(FuncionalidadeDTO.class, Funcionalidade);
+			listaDTO.add(dto);
+		}
+
+		System.out.println(listaDTO);
+	}
+
+	private static void testeTela() throws InfraEstruturaException {
+
+		TelaDTO dto = new TelaDTO();
+		dto.setDescricaoTela("descricaoTela Tela");
+		dto.setNomeTela("NomeTela");
+		dto.setNumeroTela(1);
+		dto.setTituloTela("Titulo tela");
+		dto.setUrlTela("urlTela");
+
+		RegistroAuditoriaDTO r = new RegistroAuditoriaDTO();
+		r.setDataCadastro(new Date());
+
+		MetaDadoDTO dtoMetadado = new MetaDadoDTO();
+		dtoMetadado.setVersao(1L);
+		dtoMetadado.setXml("xml");
+		dtoMetadado.setXhtml("xhtml");
+		dtoMetadado.setRegistroAuditoria(r);
+
+		dto.setMetadado(dtoMetadado);
+
+	}
+
+	private static void testeMetadado() throws InfraEstruturaException {
+		RegistroAuditoriaDTO r = new RegistroAuditoriaDTO();
+		r.setDataCadastro(new Date());
+
+		MetaDadoDTO dto = new MetaDadoDTO();
+		dto.setVersao(1L);
+		dto.setXml("xml");
+		dto.setXhtml("xhtml");
+		dto.setRegistroAuditoria(r);
+
+		MetaDado entidade = FabricaGenericaDados.transferirDados(MetaDado.class, dto);
+		System.out.println(entidade.getId());
+		System.out.println(entidade.getVersao());
+		System.out.println(entidade.getXml());
 
 	}
 

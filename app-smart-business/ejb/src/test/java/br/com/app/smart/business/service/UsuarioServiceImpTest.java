@@ -13,7 +13,9 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import br.com.app.smart.business.databuilder.UsuarioBuilder;
@@ -21,7 +23,7 @@ import br.com.app.smart.business.dto.StatusUsuarioDTO;
 import br.com.app.smart.business.dto.UsuarioDTO;
 import br.com.app.smart.business.exception.InfraEstruturaException;
 import br.com.app.smart.business.exception.NegocioException;
-import br.com.app.smart.business.interfaces.IServicoPadraoBD;
+import br.com.app.smart.business.interfaces.IServicoRemoteDAO;
 import br.com.app.smart.business.util.PackageUtil;
 
 @RunWith(Arquillian.class)
@@ -35,8 +37,11 @@ public class UsuarioServiceImpTest {
 		File[] libs = pom.resolve("br.com.app.smart.business:app-smart-business-common:0.0.1-SNAPSHOT")
 				.withClassPathResolution(true).withTransitivity().asFile();
 
-		WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war").addAsLibraries(libs)
-				.addPackage("br.com.app.smart.business.databuilder")
+		File[] libs2 = pom.resolve("org.modelmapper:modelmapper:0.7.5").withClassPathResolution(true).withTransitivity()
+				.asFile();
+
+		WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war").addAsLibraries(libs).addAsLibraries(libs2)
+				.addPackage(PackageUtil.DATA_BUILDER.getPackageName())
 				.addPackage(PackageUtil.BUILDER_INFRA.getPackageName())
 				.addPackage(PackageUtil.CONVERSORES.getPackageName()).addPackage(PackageUtil.ENUMS.getPackageName())
 				.addPackage(PackageUtil.EXCEPTION.getPackageName()).addPackage(PackageUtil.MODEL.getPackageName())
@@ -51,11 +56,14 @@ public class UsuarioServiceImpTest {
 		return war;
 	}
 
-	@EJB(beanName = "UsuarioServiceImp", beanInterface = IServicoPadraoBD.class)
-	private IServicoPadraoBD<UsuarioDTO> usuarioServiceImp;
+	@EJB(beanName = "UsuarioServiceImp", beanInterface = IServicoRemoteDAO.class)
+	private IServicoRemoteDAO<UsuarioDTO> usuarioServiceImp;
 
 	@Inject
 	private Logger log;
+	
+	@Rule
+    public ExpectedException thrown = ExpectedException.none();
 
 	@Test
 	public void crud() {
@@ -150,6 +158,18 @@ public class UsuarioServiceImpTest {
 			e.printStackTrace();
 		}
 
+	}
+	
+	@Test
+	public void inserirRegistrosIguais() throws InfraEstruturaException, NegocioException{
+		
+		
+		UsuarioDTO usuarioDTO = UsuarioBuilder.getInstanceDTO(UsuarioBuilder.TipoUsuarioBuilder.USUARIO_COMPLETO);
+		usuarioDTO = usuarioServiceImp.adiconar(usuarioDTO);
+		UsuarioDTO resutaldoBusca = usuarioServiceImp.bustarPorID(usuarioDTO.getId());
+		
+		thrown.expect(InfraEstruturaException.class);
+		usuarioDTO = usuarioServiceImp.adiconar(resutaldoBusca);
 	}
 
 	@Test

@@ -2,6 +2,7 @@ package br.com.app.smart.business.util;
 
 public enum PackageUtil {
 
+	DATA_BUILDER("br.com.app.smart.business.databuilder"),
 	BUILDER_INFRA("br.com.app.smart.business.builder.infra"),
 	CONVERSORES("br.com.app.smart.business.conversores"),
 	DATA("br.com.app.smart.business.data"),

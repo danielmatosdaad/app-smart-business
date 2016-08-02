@@ -19,14 +19,7 @@ package br.com.app.smart.business.data;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import br.com.app.smart.business.model.Parametro;
-import br.com.app.smart.business.model.TipoParametro;
-
-import java.util.List;
 
 @ApplicationScoped
 public class ParametroRepository {

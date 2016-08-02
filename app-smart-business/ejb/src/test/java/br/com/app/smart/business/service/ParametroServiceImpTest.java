@@ -19,11 +19,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import br.com.app.smart.business.dto.MetaDadoDTO;
 import br.com.app.smart.business.dto.ParametroDTO;
 import br.com.app.smart.business.dto.TipoParametroDTO;
 import br.com.app.smart.business.exception.InfraEstruturaException;
 import br.com.app.smart.business.exception.NegocioException;
-import br.com.app.smart.business.interfaces.IServicoPadraoBD;
+import br.com.app.smart.business.interfaces.IServicoRemoteDAO;
 import br.com.app.smart.business.util.PackageUtil;
 
 @RunWith(Arquillian.class)
@@ -37,7 +38,10 @@ public class ParametroServiceImpTest {
 		File[] libs = pom.resolve("br.com.app.smart.business:app-smart-business-common:0.0.1-SNAPSHOT")
 				.withClassPathResolution(true).withTransitivity().asFile();
 
-		WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war").addAsLibraries(libs)
+		File[] libs2 = pom.resolve("org.modelmapper:modelmapper:0.7.5").withClassPathResolution(true).withTransitivity()
+				.asFile();
+		
+		WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war").addAsLibraries(libs).addAsLibraries(libs2)
 				.addPackage(PackageUtil.BUILDER_INFRA.getPackageName())
 				.addPackage(PackageUtil.CONVERSORES.getPackageName()).addPackage(PackageUtil.ENUMS.getPackageName())
 				.addPackage(PackageUtil.EXCEPTION.getPackageName()).addPackage(PackageUtil.MODEL.getPackageName())
@@ -52,8 +56,8 @@ public class ParametroServiceImpTest {
 		return war;
 	}
 
-	@EJB(beanName="ParametroServiceImp")
-	private IServicoPadraoBD<ParametroDTO> parametroServiceImp;
+	@EJB(beanName = "ParametroServiceImp", beanInterface = IServicoRemoteDAO.class)
+	private IServicoRemoteDAO<ParametroDTO> parametroServiceImp;
 
 	@Inject
 	private Logger log;
@@ -63,6 +67,11 @@ public class ParametroServiceImpTest {
 
 		try {
 
+			List<ParametroDTO> listaRemover = parametroServiceImp.bustarTodos();
+			for (ParametroDTO item : listaRemover) {
+				parametroServiceImp.remover(item);
+			}
+			
 			ParametroDTO dto = new ParametroDTO();
 			dto.setId(null);
 			dto.setNome("nome");

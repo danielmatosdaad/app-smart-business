@@ -1,6 +1,5 @@
 package br.com.app.smart.business.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -10,21 +9,18 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import br.com.app.smart.business.builder.infra.FabricaGenericaDados;
 import br.com.app.smart.business.dao.facede.ParametroFacade;
 import br.com.app.smart.business.dto.ParametroDTO;
-import br.com.app.smart.business.dto.UsuarioDTO;
 import br.com.app.smart.business.exception.InfraEstruturaException;
 import br.com.app.smart.business.exception.NegocioException;
-import br.com.app.smart.business.interfaces.IServicoPadraoBD;
-import br.com.app.smart.business.interfaces.IServicoPadraoLocalBD;
+import br.com.app.smart.business.interfaces.IServicoRemoteDAO;
+import br.com.app.smart.business.interfaces.IServicoLocalDAO;
 import br.com.app.smart.business.model.Parametro;
 
 @Stateless
-@EJB(name = "java:app/app-smart-business-ejb/ParametroServiceImp", beanName = "ParametroServiceImp", beanInterface = IServicoPadraoBD.class)
-@Remote(value = { IServicoPadraoBD.class })
-@Local(value = { IServicoPadraoLocalBD.class })
-public class ParametroServiceImp implements IServicoPadraoBD<ParametroDTO>, IServicoPadraoLocalBD<ParametroDTO> {
+@Remote(value = { IServicoRemoteDAO.class })
+@Local(value = { IServicoLocalDAO.class })
+public class ParametroServiceImp implements IServicoRemoteDAO<ParametroDTO>, IServicoLocalDAO<ParametroDTO> {
 
 	@Inject
 	private Logger log;
@@ -36,13 +32,8 @@ public class ParametroServiceImp implements IServicoPadraoBD<ParametroDTO>, ISer
 	public ParametroDTO adiconar(ParametroDTO dto) throws InfraEstruturaException, NegocioException {
 
 		try {
-			LogUtil.printProcessando(log, Parametro.class, dto);
-			Parametro entidade = FabricaGenericaDados.transferirDados(Parametro.class, dto);
-			parametroFacede.registrar(entidade);
-			dto.setId(entidade.getId());
-			LogUtil.printSucesso(log, Parametro.class);
-
-			return dto;
+			LogUtil.printProcessando(log, ParametroServiceImp.class, dto);
+			return ServiceDAO.adiconar(this.parametroFacede, Parametro.class, dto);
 
 		} catch (Exception e) {
 			LogUtil.printErro(log, Parametro.class);
@@ -54,6 +45,7 @@ public class ParametroServiceImp implements IServicoPadraoBD<ParametroDTO>, ISer
 	@Override
 	public List<ParametroDTO> adiconar(List<ParametroDTO> listaDto) throws InfraEstruturaException, NegocioException {
 
+		LogUtil.printProcessando(log, ParametroServiceImp.class, listaDto);
 		for (ParametroDTO parametroDTO : listaDto) {
 			adiconar(parametroDTO);
 		}
@@ -62,20 +54,14 @@ public class ParametroServiceImp implements IServicoPadraoBD<ParametroDTO>, ISer
 
 	@Override
 	public ParametroDTO bustarPorID(Long id) throws InfraEstruturaException, NegocioException {
-		ParametroDTO dto = null;
 		try {
-			LogUtil.printProcessando(log, Parametro.class, id);
-			Parametro p = parametroFacede.buscar(id);
-			if (p != null) {
 
-				dto = FabricaGenericaDados.transferirDados(ParametroDTO.class, p);
-				LogUtil.printSucesso(log, Parametro.class);
-			}
+			LogUtil.printProcessando(log, ParametroServiceImp.class, id);
+			return ServiceDAO.bustarPorID(this.parametroFacede, ParametroDTO.class, id);
 		} catch (Exception e) {
 			LogUtil.printErro(log, Parametro.class);
 			throw new InfraEstruturaException(e);
 		}
-		return dto;
 	}
 
 	public void removerPorId(Long id) throws InfraEstruturaException, NegocioException {
@@ -88,12 +74,8 @@ public class ParametroServiceImp implements IServicoPadraoBD<ParametroDTO>, ISer
 
 	public void remover(ParametroDTO dto) throws InfraEstruturaException, NegocioException {
 		try {
-			LogUtil.printProcessando(log, Parametro.class, dto);
-
-			Parametro entidade = FabricaGenericaDados.transferirDados(Parametro.class, dto);
-			parametroFacede.remover(entidade);
-
-			LogUtil.printSucesso(log, Parametro.class);
+			LogUtil.printProcessando(log, ParametroServiceImp.class, dto);
+			ServiceDAO.remover(this.parametroFacede, Parametro.class, dto);
 
 		} catch (Exception e) {
 			LogUtil.printErro(log, Parametro.class);
@@ -103,15 +85,9 @@ public class ParametroServiceImp implements IServicoPadraoBD<ParametroDTO>, ISer
 
 	public ParametroDTO alterar(ParametroDTO dto) throws InfraEstruturaException, NegocioException {
 		try {
-			LogUtil.printProcessando(log, Parametro.class, dto);
+			LogUtil.printProcessando(log, ParametroServiceImp.class, dto);
+			return ServiceDAO.alterar(this.parametroFacede, Parametro.class, dto);
 
-			Parametro entidade = FabricaGenericaDados.transferirDados(Parametro.class, dto);
-			parametroFacede.editar(entidade);
-			dto.setId(entidade.getId());
-
-			LogUtil.printSucesso(log, Parametro.class);
-
-			return dto;
 		} catch (Exception e) {
 			LogUtil.printErro(log, Parametro.class);
 			throw new InfraEstruturaException(e);
@@ -122,20 +98,10 @@ public class ParametroServiceImp implements IServicoPadraoBD<ParametroDTO>, ISer
 	@Override
 	public List<ParametroDTO> bustarTodos() throws InfraEstruturaException, NegocioException {
 		try {
-			LogUtil.printProcessando(log, Parametro.class);
+			LogUtil.printProcessando(log, ParametroServiceImp.class);
 
-			List<Parametro> lista = parametroFacede.buscarTodos();
+			return ServiceDAO.bustarTodos(this.parametroFacede, ParametroDTO.class);
 
-			List<ParametroDTO> listaDTO = new ArrayList<ParametroDTO>();
-
-			for (Parametro parametro : lista) {
-				ParametroDTO dto = FabricaGenericaDados.transferirDados(ParametroDTO.class, parametro);
-				listaDTO.add(dto);
-			}
-
-			LogUtil.printSucesso(log, Parametro.class);
-
-			return listaDTO;
 		} catch (Exception e) {
 			LogUtil.printErro(log, Parametro.class);
 			throw new InfraEstruturaException(e);
@@ -145,19 +111,11 @@ public class ParametroServiceImp implements IServicoPadraoBD<ParametroDTO>, ISer
 	@Override
 	public List<ParametroDTO> bustarPorIntervaloID(int[] range) throws InfraEstruturaException, NegocioException {
 		try {
-			LogUtil.printProcessando(log, Parametro.class, range);
+			
+			LogUtil.printProcessando(log, ParametroServiceImp.class);
 
-			List<Parametro> lista = parametroFacede.buscarPorIntervalo(range);
-			List<ParametroDTO> listaDTO = new ArrayList<ParametroDTO>();
+			return ServiceDAO.bustarPorIntervaloID(this.parametroFacede, ParametroDTO.class, range);
 
-			for (Parametro parametro : lista) {
-				ParametroDTO dto = FabricaGenericaDados.transferirDados(ParametroDTO.class, parametro);
-				listaDTO.add(dto);
-			}
-
-			LogUtil.printSucesso(log, Parametro.class);
-
-			return listaDTO;
 		} catch (Exception e) {
 			LogUtil.printErro(log, Parametro.class);
 			throw new InfraEstruturaException(e);

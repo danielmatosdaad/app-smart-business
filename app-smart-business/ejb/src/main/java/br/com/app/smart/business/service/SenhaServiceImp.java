@@ -1,6 +1,5 @@
 package br.com.app.smart.business.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -10,65 +9,94 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import br.com.app.smart.business.builder.infra.FabricaGenericaDados;
 import br.com.app.smart.business.dao.facede.SenhaFacade;
-import br.com.app.smart.business.dto.ContatoDTO;
 import br.com.app.smart.business.dto.SenhaDTO;
 import br.com.app.smart.business.exception.InfraEstruturaException;
 import br.com.app.smart.business.exception.NegocioException;
-import br.com.app.smart.business.interfaces.IServicoPadraoBD;
-import br.com.app.smart.business.interfaces.IServicoPadraoLocalBD;
-import br.com.app.smart.business.model.Contato;
+import br.com.app.smart.business.interfaces.IServicoRemoteDAO;
+import br.com.app.smart.business.model.Parametro;
 import br.com.app.smart.business.model.Senha;
+import br.com.app.smart.business.interfaces.IServicoLocalDAO;
 
 @Stateless
-@EJB(name = "java:app/app-smart-business-ejb/SenhaServiceImp", beanName = "SenhaServiceImp", beanInterface = IServicoPadraoBD.class)
-@Remote(value = { IServicoPadraoBD.class })
-@Local(value = { IServicoPadraoLocalBD.class })
-public class SenhaServiceImp implements IServicoPadraoBD<SenhaDTO>, IServicoPadraoLocalBD<SenhaDTO> {
+@Remote(value = { IServicoRemoteDAO.class })
+@Local(value = { IServicoLocalDAO.class })
+public class SenhaServiceImp implements IServicoRemoteDAO<SenhaDTO>, IServicoLocalDAO<SenhaDTO> {
 
 	@Inject
 	private Logger log;
 
 	@EJB
-	SenhaFacade SenhaFacade;
+	SenhaFacade senhaFacede;
 
 	@Override
 	public SenhaDTO adiconar(SenhaDTO dto) throws InfraEstruturaException, NegocioException {
-
 		try {
-			LogUtil.printProcessando(log, Senha.class, dto);
-
-			Senha entidade = FabricaGenericaDados.transferirDados(Senha.class, dto);
-
-			SenhaFacade.registrar(entidade);
-			dto.setId(entidade.getId());
-			LogUtil.printSucesso(log, Senha.class);
-
-			return dto;
+			LogUtil.printProcessando(log, SenhaServiceImp.class, dto);
+			return ServiceDAO.adiconar(this.senhaFacede, Senha.class, dto);
 
 		} catch (Exception e) {
-			LogUtil.printErro(log, Senha.class);
+			LogUtil.printErro(log, Parametro.class);
+			throw new InfraEstruturaException(e);
+
+		}
+
+	}
+
+	@Override
+	public List<SenhaDTO> adiconar(List<SenhaDTO> listaDto) throws InfraEstruturaException, NegocioException {
+		try {
+			LogUtil.printProcessando(log, SenhaServiceImp.class, listaDto);
+			return ServiceDAO.adiconar(this.senhaFacede, Senha.class, listaDto);
+
+		} catch (Exception e) {
+			LogUtil.printErro(log, Parametro.class);
 			throw new InfraEstruturaException(e);
 
 		}
 	}
 
 	@Override
-	public List<SenhaDTO> adiconar(List<SenhaDTO> lista) throws InfraEstruturaException, NegocioException {
-
+	public SenhaDTO alterar(SenhaDTO dto) throws InfraEstruturaException, NegocioException {
 		try {
-			LogUtil.printProcessando(log, Senha.class, lista);
-
-			for (SenhaDTO senhaDTO : lista) {
-
-				adiconar(senhaDTO);
-			}
-
-			return lista;
+			LogUtil.printProcessando(log, SenhaServiceImp.class, dto);
+			return ServiceDAO.adiconar(this.senhaFacede, Senha.class, dto);
 
 		} catch (Exception e) {
-			LogUtil.printErro(log, Contato.class);
+			LogUtil.printErro(log, Parametro.class);
+			throw new InfraEstruturaException(e);
+
+		}
+	}
+
+	@Override
+	public void remover(SenhaDTO dto) throws InfraEstruturaException, NegocioException {
+		try {
+			LogUtil.printProcessando(log, SenhaServiceImp.class, dto);
+			ServiceDAO.remover(this.senhaFacede, Senha.class, dto);
+
+		} catch (Exception e) {
+			LogUtil.printErro(log, Parametro.class);
+			throw new InfraEstruturaException(e);
+
+		}
+
+	}
+
+	@Override
+	public void removerPorId(Long id) throws InfraEstruturaException, NegocioException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public List<SenhaDTO> bustarTodos() throws InfraEstruturaException, NegocioException {
+		try {
+			LogUtil.printProcessando(log, SenhaServiceImp.class);
+			return ServiceDAO.bustarTodos(this.senhaFacede, SenhaDTO.class);
+
+		} catch (Exception e) {
+			LogUtil.printErro(log, Parametro.class);
 			throw new InfraEstruturaException(e);
 
 		}
@@ -76,104 +104,27 @@ public class SenhaServiceImp implements IServicoPadraoBD<SenhaDTO>, IServicoPadr
 
 	@Override
 	public SenhaDTO bustarPorID(Long id) throws InfraEstruturaException, NegocioException {
-		SenhaDTO dto = null;
 		try {
-			LogUtil.printProcessando(log, Senha.class, id);
-			Senha p = SenhaFacade.buscar(id);
-			if (p != null) {
-
-				dto = FabricaGenericaDados.transferirDados(SenhaDTO.class, p);
-				LogUtil.printSucesso(log, Senha.class);
-			}
-		} catch (Exception e) {
-			LogUtil.printErro(log, Senha.class);
-			throw new InfraEstruturaException(e);
-		}
-		return dto;
-	}
-
-	public void removerPorId(Long id) throws InfraEstruturaException, NegocioException {
-		try {
-		} catch (Exception e) {
-			LogUtil.printErro(log, Senha.class);
-			throw new InfraEstruturaException(e);
-		}
-	}
-
-	public void remover(SenhaDTO dto) throws InfraEstruturaException, NegocioException {
-		try {
-			LogUtil.printProcessando(log, Senha.class, dto);
-
-			Senha entidade = FabricaGenericaDados.transferirDados(Senha.class, dto);
-			SenhaFacade.remover(entidade);
-
-			LogUtil.printSucesso(log, Senha.class);
+			LogUtil.printProcessando(log, SenhaServiceImp.class);
+			return ServiceDAO.bustarPorID(this.senhaFacede, SenhaDTO.class, id);
 
 		} catch (Exception e) {
-			LogUtil.printErro(log, Senha.class);
+			LogUtil.printErro(log, Parametro.class);
 			throw new InfraEstruturaException(e);
-		}
-	}
 
-	public SenhaDTO alterar(SenhaDTO dto) throws InfraEstruturaException, NegocioException {
-		try {
-			LogUtil.printProcessando(log, Senha.class, dto);
-
-			Senha entidade = FabricaGenericaDados.transferirDados(Senha.class, dto);
-			entidade = SenhaFacade.editar(entidade);
-			dto = FabricaGenericaDados.transferirDados(SenhaDTO.class, entidade);
-			LogUtil.printSucesso(log, Senha.class);
-
-			return dto;
-		} catch (Exception e) {
-			LogUtil.printErro(log, Senha.class);
-			throw new InfraEstruturaException(e);
-		}
-
-	}
-
-	@Override
-	public List<SenhaDTO> bustarTodos() throws InfraEstruturaException, NegocioException {
-		try {
-			LogUtil.printProcessando(log, Senha.class);
-
-			List<Senha> lista = SenhaFacade.buscarTodos();
-
-			List<SenhaDTO> listaDTO = new ArrayList<SenhaDTO>();
-
-			for (Senha Senha : lista) {
-				SenhaDTO dto = FabricaGenericaDados.transferirDados(SenhaDTO.class, Senha);
-				listaDTO.add(dto);
-			}
-
-			LogUtil.printSucesso(log, Senha.class);
-
-			return listaDTO;
-		} catch (Exception e) {
-			LogUtil.printErro(log, Senha.class);
-			throw new InfraEstruturaException(e);
 		}
 	}
 
 	@Override
 	public List<SenhaDTO> bustarPorIntervaloID(int[] range) throws InfraEstruturaException, NegocioException {
 		try {
-			LogUtil.printProcessando(log, Senha.class, range);
+			LogUtil.printProcessando(log, SenhaServiceImp.class);
+			return ServiceDAO.bustarPorIntervaloID(this.senhaFacede, SenhaDTO.class, range);
 
-			List<Senha> lista = SenhaFacade.buscarPorIntervalo(range);
-			List<SenhaDTO> listaDTO = new ArrayList<SenhaDTO>();
-
-			for (Senha Senha : lista) {
-				SenhaDTO dto = FabricaGenericaDados.transferirDados(SenhaDTO.class, Senha);
-				listaDTO.add(dto);
-			}
-
-			LogUtil.printSucesso(log, Senha.class);
-
-			return listaDTO;
 		} catch (Exception e) {
-			LogUtil.printErro(log, Senha.class);
+			LogUtil.printErro(log, Parametro.class);
 			throw new InfraEstruturaException(e);
+
 		}
 	}
 

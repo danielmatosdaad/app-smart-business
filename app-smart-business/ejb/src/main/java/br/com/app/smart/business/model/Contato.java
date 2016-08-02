@@ -18,7 +18,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 @Entity
 @XmlRootElement
 @Table(name = "contato")
-public class Contato implements Serializable {
+public class Contato implements Entidade, Serializable {
 
 	/**
 	 * 
@@ -37,9 +37,9 @@ public class Contato implements Serializable {
 	private String valor;
 
 	private RegistroAuditoria registroAuditoria;
-	
-	@OneToMany	
-	@JoinColumn(name="usuario_id")
+
+	@OneToMany
+	@JoinColumn(name = "usuario_id")
 	private List<Usuario> usuarios;
 
 	public Long getId() {
@@ -72,6 +72,14 @@ public class Contato implements Serializable {
 
 	public void setRegistroAuditoria(RegistroAuditoria registroAuditoria) {
 		this.registroAuditoria = registroAuditoria;
+	}
+
+	public List<Usuario> getUsuarios() {
+		return usuarios;
+	}
+
+	public void setUsuarios(List<Usuario> usuarios) {
+		this.usuarios = usuarios;
 	}
 
 }

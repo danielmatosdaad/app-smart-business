@@ -14,12 +14,10 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jboss.logging.processor.util.Objects.ToStringBuilder;
-
 @Entity(name = "parametro")
 @XmlRootElement
 @Table(name = "parametro", uniqueConstraints = @UniqueConstraint(columnNames = "nome"))
-public class Parametro implements Serializable {
+public class Parametro implements Entidade,Serializable {
 
 	/**
 	 * 

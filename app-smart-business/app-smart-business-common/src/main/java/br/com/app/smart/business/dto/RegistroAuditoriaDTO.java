@@ -3,7 +3,7 @@ package br.com.app.smart.business.dto;
 import java.io.Serializable;
 import java.util.Date;
 
-public class RegistroAuditoriaDTO implements Serializable{
+public class RegistroAuditoriaDTO implements DTO,Serializable{
 
 	/**
 	 * 
@@ -28,6 +28,16 @@ public class RegistroAuditoriaDTO implements Serializable{
 
 	public void setDataAlteracao(Date dataAlteracao) {
 		this.dataAlteracao = dataAlteracao;
+	}
+
+	public Long getId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setId(Long id) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -3,29 +3,23 @@ package br.com.app.smart.business.model;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import br.com.app.smart.business.dto.RegistroAuditoriaDTO;
-
 @Entity(name = "usuario")
 @XmlRootElement
 @Table(name = "usuario")
-public class Usuario implements Serializable {
+public class Usuario implements Entidade,Serializable {
 
 	/**
 	 * 

@@ -18,7 +18,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 @Entity(name = "senha")
 @XmlRootElement
 @Table(name = "senha")
-public class Senha implements Serializable {
+public class Senha implements Entidade, Serializable {
 
 	/**
 	 * 
@@ -38,9 +38,10 @@ public class Senha implements Serializable {
 	@Enumerated(value = EnumType.STRING)
 	private StatusSenha statusSenha;
 
-	@OneToMany	
-	@JoinColumn(name="usuario_id")
+	@OneToMany
+	@JoinColumn(name = "usuario_id")
 	private List<Usuario> usuarios;
+
 	public Long getId() {
 		return id;
 	}
@@ -71,6 +72,14 @@ public class Senha implements Serializable {
 
 	public void setRegistroAuditoria(RegistroAuditoria registroAuditoria) {
 		this.registroAuditoria = registroAuditoria;
+	}
+
+	public List<Usuario> getUsuarios() {
+		return usuarios;
+	}
+
+	public void setUsuarios(List<Usuario> usuarios) {
+		this.usuarios = usuarios;
 	}
 
 }

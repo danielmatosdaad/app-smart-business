@@ -3,7 +3,7 @@ package br.com.app.smart.business.dto;
 import java.io.Serializable;
 import java.util.List;
 
-public class ContatoDTO implements Serializable {
+public class ContatoDTO implements DTO, Serializable {
 
 	/**
 	 * 
