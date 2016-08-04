@@ -12,14 +12,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.logging.Logger;
-
-import br.com.app.smart.business.databuilder.FuncionalidadeBuilder;
-import br.com.app.smart.business.databuilder.GrupoFuncionalidadeBuilder;
-import br.com.app.smart.business.databuilder.FuncionalidadeBuilder.TipoFuncionalidadeBuilder;
-import br.com.app.smart.business.databuilder.GrupoFuncionalidadeBuilder.GrupoTipoFuncionalidadeBuilder;
 import br.com.app.smart.business.dto.ContatoDTO;
 import br.com.app.smart.business.dto.FuncionalidadeDTO;
-import br.com.app.smart.business.dto.GrupoFuncionalidadeDTO;
 import br.com.app.smart.business.dto.MetaDadoDTO;
 import br.com.app.smart.business.dto.ParametroDTO;
 import br.com.app.smart.business.dto.RegistroAuditoriaDTO;
@@ -31,12 +25,6 @@ import br.com.app.smart.business.dto.TipoContatoDTO;
 import br.com.app.smart.business.dto.TipoParametroDTO;
 import br.com.app.smart.business.dto.UsuarioDTO;
 import br.com.app.smart.business.exception.InfraEstruturaException;
-import br.com.app.smart.business.model.Funcionalidade;
-import br.com.app.smart.business.model.GrupoFuncionalidade;
-import br.com.app.smart.business.model.MetaDado;
-import br.com.app.smart.business.model.Parametro;
-//import br.com.app.smart.business.model.Tela;
-import br.com.app.smart.business.model.Usuario;
 
 @Named
 public class FabricaGenericaDados {
@@ -343,141 +331,141 @@ public class FabricaGenericaDados {
 		return null;
 	}
 
-	public static void main(String args[]) throws InfraEstruturaException {
-
-		// testParametro();
-		// testUsuario();
-		// testeMetadado();
-		// testeTela();
-		testeFuncionalidadeDTO();
-
-	}
-
-	private static void testeFuncionalidadeDTO() throws InfraEstruturaException {
-
-		Funcionalidade e1 = new Funcionalidade();
-		e1.setId(1L);
-		e1.setNomeFuncionalidade("Manter Usuario");
-		e1.setDescricao("Possibilita realizar alguma coisa1");
-
-		List<Funcionalidade> lista2 = new ArrayList<Funcionalidade>();
-		lista2.add(e1);
-		GrupoFuncionalidade g1 = new GrupoFuncionalidade();
-		g1.setId(1L);
-		g1.setNomeGrupoFuncionalidade("Usuario2");
-		g1.setDescricao("Possibilita realizar alguma coisa2");
-		g1.setFuncionalidades(lista2);
-
-		e1.setGrupoFuncionalidade(g1);
-		List<Funcionalidade> lista = new ArrayList<Funcionalidade>();
-		lista.add(e1);
-		List<FuncionalidadeDTO> listaDTO = new ArrayList<FuncionalidadeDTO>();
-
-		for (Funcionalidade Funcionalidade : lista) {
-			FuncionalidadeDTO dto = FabricaGenericaDados.transferirDados(FuncionalidadeDTO.class, Funcionalidade);
-			listaDTO.add(dto);
-		}
-
-		System.out.println(listaDTO);
-	}
-
-	private static void testeTela() throws InfraEstruturaException {
-
-		TelaDTO dto = new TelaDTO();
-		dto.setDescricaoTela("descricaoTela Tela");
-		dto.setNomeTela("NomeTela");
-		dto.setNumeroTela(1);
-		dto.setTituloTela("Titulo tela");
-		dto.setUrlTela("urlTela");
-
-		RegistroAuditoriaDTO r = new RegistroAuditoriaDTO();
-		r.setDataCadastro(new Date());
-
-		MetaDadoDTO dtoMetadado = new MetaDadoDTO();
-		dtoMetadado.setVersao(1L);
-		dtoMetadado.setXml("xml");
-		dtoMetadado.setXhtml("xhtml");
-		dtoMetadado.setRegistroAuditoria(r);
-
-		dto.setMetadado(dtoMetadado);
-
-	}
-
-	private static void testeMetadado() throws InfraEstruturaException {
-		RegistroAuditoriaDTO r = new RegistroAuditoriaDTO();
-		r.setDataCadastro(new Date());
-
-		MetaDadoDTO dto = new MetaDadoDTO();
-		dto.setVersao(1L);
-		dto.setXml("xml");
-		dto.setXhtml("xhtml");
-		dto.setRegistroAuditoria(r);
-
-		MetaDado entidade = FabricaGenericaDados.transferirDados(MetaDado.class, dto);
-		System.out.println(entidade.getId());
-		System.out.println(entidade.getVersao());
-		System.out.println(entidade.getXml());
-
-	}
-
-	private static void testParametro() throws InfraEstruturaException {
-
-		ParametroDTO dto = new ParametroDTO();
-		dto.setId(1L);
-		dto.setNome("nome");
-		dto.setDataAlteracao(new Date());
-		dto.setDataInclusao(new Date());
-		dto.setDescricao("descricao");
-		dto.setTipoParametro(TipoParametroDTO.CARACTER);
-		Parametro entidade = FabricaGenericaDados.transferirDados(Parametro.class, dto);
-		System.out.println(entidade.getId());
-		System.out.println(entidade.getNome());
-		System.out.println(entidade.getDataAlteracao());
-		System.out.println(entidade.getDescricao());
-		System.out.println(entidade.getTipoParametro());
-
-		ParametroDTO dtoConvertido = FabricaGenericaDados.transferirDados(ParametroDTO.class, entidade);
-
-		System.out.println(dtoConvertido.getId());
-		System.out.println(dtoConvertido.getNome());
-		System.out.println(dtoConvertido.getDataAlteracao());
-		System.out.println(dtoConvertido.getDescricao());
-		System.out.println(dtoConvertido.getTipoParametro());
-	}
-
-	public static void testUsuario() throws InfraEstruturaException {
-
-		RegistroAuditoriaDTO r = new RegistroAuditoriaDTO();
-		r.setDataCadastro(new Date());
-
-		SenhaDTO senhaDTO = new SenhaDTO();
-		senhaDTO.setHashSenha("=333333333333333333");
-		senhaDTO.setStatusSenha(StatusSenhaDTO.ATIVO);
-		senhaDTO.setRegistroAuditoria(r);
-
-		List<SenhaDTO> senhas = new ArrayList<SenhaDTO>();
-		senhas.add(senhaDTO);
-
-		ContatoDTO contatoDTO = new ContatoDTO();
-		contatoDTO.setTipoContato(TipoContatoDTO.CELULAR);
-		contatoDTO.setValor("99999999999999999");
-		contatoDTO.setRegistroAuditoria(r);
-
-		List<ContatoDTO> contatos = new ArrayList<ContatoDTO>();
-		contatos.add(contatoDTO);
-
-		UsuarioDTO usuarioDTO = new UsuarioDTO();
-
-		usuarioDTO.setNome("x");
-		usuarioDTO.setSobrenome("y");
-		usuarioDTO.setStatusUsuario(StatusUsuarioDTO.ATIVO);
-		usuarioDTO.setContatos(contatos);
-		usuarioDTO.setSenhas(senhas);
-		usuarioDTO.setRegistroAuditoria(r);
-
-		Usuario entidade = FabricaGenericaDados.transferirDados(Usuario.class, usuarioDTO);
-
-		System.out.println(entidade.getId());
-		System.out.println(entidade.getNome());
-	}
+//	public static void main(String args[]) throws InfraEstruturaException {
+//
+//		// testParametro();
+//		// testUsuario();
+//		// testeMetadado();
+//		// testeTela();
+//		testeFuncionalidadeDTO();
+//
+//	}
+//
+//	private static void testeFuncionalidadeDTO() throws InfraEstruturaException {
+//
+//		Funcionalidade e1 = new Funcionalidade();
+//		e1.setId(1L);
+//		e1.setNomeFuncionalidade("Manter Usuario");
+//		e1.setDescricao("Possibilita realizar alguma coisa1");
+//
+//		List<Funcionalidade> lista2 = new ArrayList<Funcionalidade>();
+//		lista2.add(e1);
+//		GrupoFuncionalidade g1 = new GrupoFuncionalidade();
+//		g1.setId(1L);
+//		g1.setNomeGrupoFuncionalidade("Usuario2");
+//		g1.setDescricao("Possibilita realizar alguma coisa2");
+//		g1.setFuncionalidades(lista2);
+//
+//		e1.setGrupoFuncionalidade(g1);
+//		List<Funcionalidade> lista = new ArrayList<Funcionalidade>();
+//		lista.add(e1);
+//		List<FuncionalidadeDTO> listaDTO = new ArrayList<FuncionalidadeDTO>();
+//
+//		for (Funcionalidade Funcionalidade : lista) {
+//			FuncionalidadeDTO dto = FabricaGenericaDados.transferirDados(FuncionalidadeDTO.class, Funcionalidade);
+//			listaDTO.add(dto);
+//		}
+//
+//		System.out.println(listaDTO);
+//	}
+//
+//	private static void testeTela() throws InfraEstruturaException {
+//
+//		TelaDTO dto = new TelaDTO();
+//		dto.setDescricaoTela("descricaoTela Tela");
+//		dto.setNomeTela("NomeTela");
+//		dto.setNumeroTela(1);
+//		dto.setTituloTela("Titulo tela");
+//		dto.setUrlTela("urlTela");
+//
+//		RegistroAuditoriaDTO r = new RegistroAuditoriaDTO();
+//		r.setDataCadastro(new Date());
+//
+//		MetaDadoDTO dtoMetadado = new MetaDadoDTO();
+//		dtoMetadado.setVersao(1L);
+//		dtoMetadado.setXml("xml");
+//		dtoMetadado.setXhtml("xhtml");
+//		dtoMetadado.setRegistroAuditoria(r);
+//
+//		dto.setMetadado(dtoMetadado);
+//
+//	}
+//
+//	private static void testeMetadado() throws InfraEstruturaException {
+//		RegistroAuditoriaDTO r = new RegistroAuditoriaDTO();
+//		r.setDataCadastro(new Date());
+//
+//		MetaDadoDTO dto = new MetaDadoDTO();
+//		dto.setVersao(1L);
+//		dto.setXml("xml");
+//		dto.setXhtml("xhtml");
+//		dto.setRegistroAuditoria(r);
+//
+//		MetaDado entidade = FabricaGenericaDados.transferirDados(MetaDado.class, dto);
+//		System.out.println(entidade.getId());
+//		System.out.println(entidade.getVersao());
+//		System.out.println(entidade.getXml());
+//
+//	}
+//
+//	private static void testParametro() throws InfraEstruturaException {
+//
+//		ParametroDTO dto = new ParametroDTO();
+//		dto.setId(1L);
+//		dto.setNome("nome");
+//		dto.setDataAlteracao(new Date());
+//		dto.setDataInclusao(new Date());
+//		dto.setDescricao("descricao");
+//		dto.setTipoParametro(TipoParametroDTO.CARACTER);
+//		Parametro entidade = FabricaGenericaDados.transferirDados(Parametro.class, dto);
+//		System.out.println(entidade.getId());
+//		System.out.println(entidade.getNome());
+//		System.out.println(entidade.getDataAlteracao());
+//		System.out.println(entidade.getDescricao());
+//		System.out.println(entidade.getTipoParametro());
+//
+//		ParametroDTO dtoConvertido = FabricaGenericaDados.transferirDados(ParametroDTO.class, entidade);
+//
+//		System.out.println(dtoConvertido.getId());
+//		System.out.println(dtoConvertido.getNome());
+//		System.out.println(dtoConvertido.getDataAlteracao());
+//		System.out.println(dtoConvertido.getDescricao());
+//		System.out.println(dtoConvertido.getTipoParametro());
+//	}
+//
+//	public static void testUsuario() throws InfraEstruturaException {
+//
+//		RegistroAuditoriaDTO r = new RegistroAuditoriaDTO();
+//		r.setDataCadastro(new Date());
+//
+//		SenhaDTO senhaDTO = new SenhaDTO();
+//		senhaDTO.setHashSenha("=333333333333333333");
+//		senhaDTO.setStatusSenha(StatusSenhaDTO.ATIVO);
+//		senhaDTO.setRegistroAuditoria(r);
+//
+//		List<SenhaDTO> senhas = new ArrayList<SenhaDTO>();
+//		senhas.add(senhaDTO);
+//
+//		ContatoDTO contatoDTO = new ContatoDTO();
+//		contatoDTO.setTipoContato(TipoContatoDTO.CELULAR);
+//		contatoDTO.setValor("99999999999999999");
+//		contatoDTO.setRegistroAuditoria(r);
+//
+//		List<ContatoDTO> contatos = new ArrayList<ContatoDTO>();
+//		contatos.add(contatoDTO);
+//
+//		UsuarioDTO usuarioDTO = new UsuarioDTO();
+//
+//		usuarioDTO.setNome("x");
+//		usuarioDTO.setSobrenome("y");
+//		usuarioDTO.setStatusUsuario(StatusUsuarioDTO.ATIVO);
+//		usuarioDTO.setContatos(contatos);
+//		usuarioDTO.setSenhas(senhas);
+//		usuarioDTO.setRegistroAuditoria(r);
+//
+//		Usuario entidade = FabricaGenericaDados.transferirDados(Usuario.class, usuarioDTO);
+//
+//		System.out.println(entidade.getId());
+//		System.out.println(entidade.getNome());
+//	}
 }

@@ -23,11 +23,11 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
-import br.com.app.smart.business.databuilder.FuncionalidadeBuilder;
+import br.com.app.smart.business.databuilder.PerfilBuilder;
 
-import br.com.app.smart.business.databuilder.FuncionalidadeBuilder.TipoFuncionalidadeBuilder;
+import br.com.app.smart.business.databuilder.PerfilBuilder.TipoPerfilBuilder;
+import br.com.app.smart.business.dto.PerfilDTO;
 import br.com.app.smart.business.dto.FuncionalidadeDTO;
-import br.com.app.smart.business.dto.GrupoFuncionalidadeDTO;
 import br.com.app.smart.business.dto.MetaDadoDTO;
 import br.com.app.smart.business.exception.InfraEstruturaException;
 import br.com.app.smart.business.exception.NegocioException;
@@ -40,7 +40,7 @@ import br.com.app.smart.business.util.PackageUtil;
  *
  */
 @RunWith(Arquillian.class)
-public class FuncionalidadeServiceImpTest {
+public class PerfilServiceImpTest {
 
 	@Deployment
 	public static Archive<?> createTestArchive() {
@@ -69,14 +69,11 @@ public class FuncionalidadeServiceImpTest {
 		return war;
 	}
 
-	@EJB(beanName = "FuncionalidadeServiceImp", beanInterface = IServicoRemoteDAO.class)
-	private IServicoRemoteDAO<FuncionalidadeDTO> remote;
+	@EJB(beanName = "PerfilServiceImp", beanInterface = IServicoRemoteDAO.class)
+	private IServicoRemoteDAO<PerfilDTO> remote;
 
-	@EJB(beanName = "FuncionalidadeServiceImp", beanInterface = IServicoLocalDAO.class)
-	private IServicoLocalDAO<FuncionalidadeDTO> local;
-
-	@EJB(beanName = "MetaDadoServiceImp", beanInterface = IServicoLocalDAO.class)
-	private IServicoLocalDAO<MetaDadoDTO> localMetaDadoServiceImp;
+	@EJB(beanName = "PerfilServiceImp", beanInterface = IServicoLocalDAO.class)
+	private IServicoLocalDAO<PerfilDTO> local;
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
@@ -94,74 +91,57 @@ public class FuncionalidadeServiceImpTest {
 	public void crud() throws InfraEstruturaException, NegocioException {
 
 		// limpando a base
-		List<FuncionalidadeDTO> listaRemover = this.local.bustarTodos();
-		for (FuncionalidadeDTO item : listaRemover) {
+		List<PerfilDTO> listaRemover = this.local.bustarTodos();
+		for (PerfilDTO item : listaRemover) {
 			this.local.remover(item);
 		}
 
 		// testando inserao
-		FuncionalidadeDTO dto = FuncionalidadeBuilder.getInstanceDTO(TipoFuncionalidadeBuilder.INSTANCIA);
-		FuncionalidadeDTO dto2 = FuncionalidadeBuilder.getInstanceDTO(TipoFuncionalidadeBuilder.INSTANCIA);
+		PerfilDTO dto = PerfilBuilder.getInstanceDTO(TipoPerfilBuilder.INSTANCIA);
+		PerfilDTO dto2 = PerfilBuilder.getInstanceDTO(TipoPerfilBuilder.INSTANCIA);
 		dto = this.local.adiconar(dto);
 		dto2 = this.local.adiconar(dto2);
-		FuncionalidadeDTO resutaldoBusca = this.local.bustarPorID(dto.getId());
+		PerfilDTO resutaldoBusca = this.local.bustarPorID(dto.getId());
 		Assert.assertNotNull(resutaldoBusca);
 		Assert.assertEquals(dto.getId().longValue(), resutaldoBusca.getId().longValue());
-		FuncionalidadeDTO resutaldoBusca2 = this.local.bustarPorID(dto2.getId());
+		PerfilDTO resutaldoBusca2 = this.local.bustarPorID(dto2.getId());
 		Assert.assertNotNull(resutaldoBusca2);
 		Assert.assertEquals(dto2.getId().longValue(), resutaldoBusca2.getId().longValue());
 
-		List<FuncionalidadeDTO> todos = local.bustarTodos();
+		List<PerfilDTO> todos = local.bustarTodos();
 		Assert.assertNotNull(todos);
 		System.out.println("Buscar todos: " + todos.size());
 		Assert.assertTrue(todos.size() == 2);
 
 		int range[] = { 0, 2 };
-		List<FuncionalidadeDTO> todosIntervalo = local.bustarPorIntervaloID(range);
+		List<PerfilDTO> todosIntervalo = local.bustarPorIntervaloID(range);
 		Assert.assertNotNull(todosIntervalo);
 		System.out.println("bustarPorIntervaloID: " + todosIntervalo.size());
 		Assert.assertTrue(todosIntervalo.size() == 2);
 
 		resutaldoBusca2.setDescricao("xml2");
 
-		FuncionalidadeDTO resutaldoBusca3 = local.alterar(resutaldoBusca2);
+		PerfilDTO resutaldoBusca3 = local.alterar(resutaldoBusca2);
 		Assert.assertEquals(resutaldoBusca2.getDescricao(), resutaldoBusca3.getDescricao());
 
 		local.remover(resutaldoBusca3);
 
-		FuncionalidadeDTO dto4 = local.bustarPorID(resutaldoBusca3.getId());
+		PerfilDTO dto4 = local.bustarPorID(resutaldoBusca3.getId());
 		Assert.assertNull(dto4);
 
 	}
 
 	@Test
-	public void testeCriarFuncinalidadeVinculadaMetaDado() throws InfraEstruturaException, NegocioException {
+	public void testeCriarPerfilFuncinalidadeVinculadoso() throws InfraEstruturaException, NegocioException {
 
 		// limpando a base
-		List<FuncionalidadeDTO> listaRemover = this.local.bustarTodos();
-		for (FuncionalidadeDTO item : listaRemover) {
+		List<PerfilDTO> listaRemover = this.local.bustarTodos();
+		for (PerfilDTO item : listaRemover) {
 			this.local.remover(item);
 		}
 
-		List<MetaDadoDTO> listaMetaDadoDTO = this.localMetaDadoServiceImp.bustarTodos();
-		for (MetaDadoDTO item : listaMetaDadoDTO) {
-			this.localMetaDadoServiceImp.remover(item);
-		}
-
-		FuncionalidadeDTO dto = FuncionalidadeBuilder.getInstanceDTO(TipoFuncionalidadeBuilder.FUNCIONALIDADE_METADADO);
-
-		this.localMetaDadoServiceImp.adiconar(dto.getMetadados());
-
-		MetaDadoDTO resutaldoBusca = this.localMetaDadoServiceImp.bustarPorID(dto.getMetadados().get(0).getId());
-		Assert.assertNotNull(resutaldoBusca);
-		Assert.assertEquals(dto.getMetadados().get(0).getId().longValue(), resutaldoBusca.getId().longValue());
-		// testando inserao
-		this.local.adiconar(dto);
-		FuncionalidadeDTO resutaldoBuscaFuncionalidade = this.local.bustarPorID(dto.getId());
-		Assert.assertNotNull(resutaldoBuscaFuncionalidade);
-		Assert.assertEquals(dto.getId().longValue(), resutaldoBuscaFuncionalidade.getId().longValue());
 		
-		System.out.println("sucesso testeCriarFuncinalidadeVinculadaMetaDado");
+		System.out.println("sucesso testeCriarPerfilFuncinalidadeVinculadoso");
 	}
 
 	//

@@ -27,7 +27,7 @@
 		<class>br.com.app.smart.business.model.Usuario</class>
 		<class>br.com.app.smart.business.model.Contato</class>
 		<class>br.com.app.smart.business.model.Senha</class>
-		
+		<class>br.com.app.smart.business.model.Perfil</class>
 		<class>br.com.app.smart.business.model.Funcionalidade</class>
 		<class>br.com.app.smart.business.model.GrupoFuncionalidade</class>
 		<class>br.com.app.smart.business.model.MetaDado</class>

@@ -25,10 +25,17 @@ public class MetaDadoBuilder {
 		r.setDataCadastro(new Date());
 
 		MetaDadoDTO dto = new MetaDadoDTO();
+		dto.setDescricaoTela("descricao tela");
+		dto.setNumeroTela(1);
+		dto.setTituloTela("TituloTela");
+		dto.setUrlTela("urlTela");
+		dto.setDescricaoTela("descricao tela");
 		dto.setVersao(1L);
 		dto.setXml("xml");
 		dto.setXhtml("xhtml");
 		dto.setRegistroAuditoria(r);
+		
+		
 
 		return dto;
 

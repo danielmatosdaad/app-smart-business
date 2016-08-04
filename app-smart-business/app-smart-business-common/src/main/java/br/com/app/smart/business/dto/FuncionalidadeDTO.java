@@ -1,8 +1,9 @@
 package br.com.app.smart.business.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
-public class FuncionalidadeDTO implements DTO,Serializable {
+public class FuncionalidadeDTO implements DTO, Serializable {
 
 	/**
 	 * 
@@ -16,6 +17,8 @@ public class FuncionalidadeDTO implements DTO,Serializable {
 	private String descricao;
 
 	private GrupoFuncionalidadeDTO grupoFuncionalidade;
+
+	public List<MetaDadoDTO> metadados;
 
 	public Long getId() {
 		return id;
@@ -49,5 +52,12 @@ public class FuncionalidadeDTO implements DTO,Serializable {
 		this.grupoFuncionalidade = grupoFuncionalidade;
 	}
 
+	public List<MetaDadoDTO> getMetadados() {
+		return metadados;
+	}
+
+	public void setMetadados(List<MetaDadoDTO> metadados) {
+		this.metadados = metadados;
+	}
 
 }

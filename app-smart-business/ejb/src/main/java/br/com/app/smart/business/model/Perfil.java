@@ -6,9 +6,7 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -36,8 +34,7 @@ public class Perfil implements Entidade, Serializable {
 	@Size(min = 1, max = 100, message = "Tamanho maximo de caracteres sao 20")
 	private String descricao;
 
-	@ManyToMany
-	@JoinTable(name = "funcionalidade_perfil", joinColumns = @JoinColumn(name = "funcionalidade_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "perfil_id", referencedColumnName = "id"))
+	@OneToMany(mappedBy = "perfil")
 	private List<Funcionalidade> funcionalidades;
 
 	public Long getId() {

@@ -1,11 +1,14 @@
 package br.com.app.smart.business.model;
 
 import java.io.Serializable;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -14,7 +17,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @XmlRootElement
 @Table(name = "funcionalidade")
-public class Funcionalidade implements Entidade,Serializable {
+public class Funcionalidade implements Entidade, Serializable {
 
 	/**
 	 * 
@@ -34,7 +37,13 @@ public class Funcionalidade implements Entidade,Serializable {
 	private String descricao;
 
 	@ManyToOne
+	private Perfil perfil;
+	
+	@ManyToOne
 	private GrupoFuncionalidade grupoFuncionalidade;
+
+	@OneToMany(mappedBy = "funcionalidade")
+	private List<MetaDado> metadados;
 
 	public Long getId() {
 		return id;
@@ -67,6 +76,5 @@ public class Funcionalidade implements Entidade,Serializable {
 	public void setGrupoFuncionalidade(GrupoFuncionalidade grupoFuncionalidade) {
 		this.grupoFuncionalidade = grupoFuncionalidade;
 	}
-
 
 }

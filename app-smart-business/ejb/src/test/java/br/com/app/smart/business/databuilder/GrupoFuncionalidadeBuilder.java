@@ -1,10 +1,7 @@
 package br.com.app.smart.business.databuilder;
 
-import java.util.Date;
 
-import br.com.app.smart.business.dto.FuncionalidadeDTO;
 import br.com.app.smart.business.dto.GrupoFuncionalidadeDTO;
-import br.com.app.smart.business.dto.RegistroAuditoriaDTO;
 
 public class GrupoFuncionalidadeBuilder {
 

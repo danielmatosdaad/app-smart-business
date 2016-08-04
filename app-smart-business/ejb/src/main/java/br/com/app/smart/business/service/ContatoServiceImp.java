@@ -1,26 +1,20 @@
 package br.com.app.smart.business.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-
 import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-
-import br.com.app.smart.business.builder.infra.FabricaGenericaDados;
 import br.com.app.smart.business.dao.facede.ContatoFacade;
 import br.com.app.smart.business.dto.ContatoDTO;
-import br.com.app.smart.business.dto.SenhaDTO;
 import br.com.app.smart.business.exception.InfraEstruturaException;
 import br.com.app.smart.business.exception.NegocioException;
 import br.com.app.smart.business.interfaces.IServicoRemoteDAO;
 import br.com.app.smart.business.interfaces.IServicoLocalDAO;
 import br.com.app.smart.business.model.Contato;
 import br.com.app.smart.business.model.Parametro;
-import br.com.app.smart.business.model.Senha;
 
 @Stateless
 @Remote(value = { IServicoRemoteDAO.class })
