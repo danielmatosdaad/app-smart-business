@@ -79,6 +79,7 @@ public class PerfilServiceImp implements IServicoRemoteDAO<PerfilDTO>, IServicoL
 			return ServiceDAO.bustarPorID(this.perfilFacade, PerfilDTO.class, id);
 		} catch (Exception e) {
 			LogUtil.printErro(log, Perfil.class);
+			e.printStackTrace();
 			throw new InfraEstruturaException(e);
 		}
 	}

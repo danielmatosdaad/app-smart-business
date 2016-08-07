@@ -1,12 +1,17 @@
 package br.com.app.smart.business.model;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -36,6 +41,13 @@ public class Perfil implements Entidade, Serializable {
 
 	@OneToMany(mappedBy = "perfil")
 	private List<Funcionalidade> funcionalidades;
+
+	@OneToMany(mappedBy = "perfilPai", fetch = FetchType.LAZY,orphanRemoval=true)
+	private List<Perfil> perfilFilhos;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "perfil_id")
+	private Perfil perfilPai;
 
 	public Long getId() {
 		return id;
@@ -67,6 +79,22 @@ public class Perfil implements Entidade, Serializable {
 
 	public void setFuncionalidades(List<Funcionalidade> funcionalidades) {
 		this.funcionalidades = funcionalidades;
+	}
+
+	public List<Perfil> getPerfilFilhos() {
+		return perfilFilhos;
+	}
+
+	public void setPerfilFilhos(List<Perfil> perfilFilhos) {
+		this.perfilFilhos = perfilFilhos;
+	}
+
+	public Perfil getPerfilPai() {
+		return perfilPai;
+	}
+
+	public void setPerfilPai(Perfil perfilPai) {
+		this.perfilPai = perfilPai;
 	}
 
 }

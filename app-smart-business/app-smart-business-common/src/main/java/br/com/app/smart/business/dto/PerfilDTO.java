@@ -1,9 +1,10 @@
 package br.com.app.smart.business.dto;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 
-public class PerfilDTO implements DTO,Serializable {
+public class PerfilDTO implements DTO, Serializable {
 
 	/**
 	 * 
@@ -17,6 +18,10 @@ public class PerfilDTO implements DTO,Serializable {
 	private String descricao;
 
 	private List<FuncionalidadeDTO> funcionalidades;
+
+	private List<PerfilDTO> perfilFilhos;
+
+	private PerfilDTO perfilPai;
 
 	public Long getId() {
 		return id;
@@ -49,5 +54,22 @@ public class PerfilDTO implements DTO,Serializable {
 	public void setFuncionalidades(List<FuncionalidadeDTO> funcionalidades) {
 		this.funcionalidades = funcionalidades;
 	}
+
+	public List<PerfilDTO> getPerfilFilhos() {
+		return perfilFilhos;
+	}
+
+	public void setPerfilFilhos(List<PerfilDTO> perfilFilhos) {
+		this.perfilFilhos = perfilFilhos;
+	}
+
+	public PerfilDTO getPerfilPai() {
+		return perfilPai;
+	}
+
+	public void setPerfilPai(PerfilDTO perfilPai) {
+		this.perfilPai = perfilPai;
+	}
+
 
 }

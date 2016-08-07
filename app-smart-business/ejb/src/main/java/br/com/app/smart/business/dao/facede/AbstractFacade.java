@@ -2,11 +2,11 @@ package br.com.app.smart.business.dao.facede;
 
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import br.com.app.smart.business.model.Entidade;
 
-public abstract class AbstractFacade<T extends Entidade> implements IFacedeDAO{
-
+public abstract class AbstractFacade<T extends Entidade> implements IFacedeDAO {
 
 	private Class<T> entityClass;
 
@@ -67,7 +67,6 @@ public abstract class AbstractFacade<T extends Entidade> implements IFacedeDAO{
 
 	public long count() {
 
-
 		javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
 		javax.persistence.criteria.Root<T> rt = cq.from(entityClass);
 		cq.select(getEntityManager().getCriteriaBuilder().count(rt));
@@ -75,5 +74,29 @@ public abstract class AbstractFacade<T extends Entidade> implements IFacedeDAO{
 		long resultado = ((Long) q.getSingleResult()).longValue();
 		return resultado;
 	}
-	
+
+	public List<?> queryList(String queryText, Object[] parameters) {
+		return query(queryText, parameters).getResultList();
+	}
+
+	public void executeUpdate(String sqlCommand, Object[] parameters) {
+		Query query = query(sqlCommand, parameters);
+		query.executeUpdate();
+	}
+
+	private Query query(String queryText, Object[] parameters) {
+		Query query = getEntityManager().createQuery(queryText);
+		if (parameters != null) {
+			int i = 1;
+			for (Object parameter : parameters) {
+				if (parameter == null)
+					throw new IllegalArgumentException(
+							"Binding parameter at position " + i + " can not be null: " + queryText);
+				query.setParameter(i, parameter);
+				i++;
+			}
+		}
+		return query;
+	}
+
 }
