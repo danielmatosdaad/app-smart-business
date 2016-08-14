@@ -2,23 +2,19 @@ package br.com.app.smart.business.model;
 
 import java.io.Serializable;
 
-public class TipoConta implements Entidade,Serializable {
+public enum TipoConta implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	MASTER(1);
 
-	@Override
-	public Long getId() {
-		// TODO Auto-generated method stub
-		return null;
+	private Integer value;
+
+	private TipoConta(Integer valor) {
+
+		this.value = valor;
 	}
 
-	@Override
-	public void setId(Long id) {
-		// TODO Auto-generated method stub
-		
+	public Integer getValue() {
+		return value;
 	}
 
 }

@@ -22,8 +22,10 @@
 		<jta-data-source>java:jboss/datasources/app-smart-businessDS</jta-data-source>
 
 
-		<class>br.com.app.smart.business.model.Member</class>
 		<class>br.com.app.smart.business.model.Parametro</class>
+		<class>br.com.app.smart.business.model.Contrato</class>
+		<class>br.com.app.smart.business.model.Assinatura</class>
+		<class>br.com.app.smart.business.model.Conta</class>
 		<class>br.com.app.smart.business.model.Usuario</class>
 		<class>br.com.app.smart.business.model.Contato</class>
 		<class>br.com.app.smart.business.model.Senha</class>

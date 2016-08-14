@@ -1,7 +1,6 @@
 package br.com.app.smart.business.model;
 
 import java.io.Serializable;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -11,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -20,7 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity(name = "perfil")
 @XmlRootElement
 @Table(name = "perfil")
-public class Perfil implements Entidade, Serializable {
+public class Perfil implements Entidade, Comparable<Perfil>, Serializable {
 
 	/**
 	 * 
@@ -42,7 +40,7 @@ public class Perfil implements Entidade, Serializable {
 	@OneToMany(mappedBy = "perfil")
 	private List<Funcionalidade> funcionalidades;
 
-	@OneToMany(mappedBy = "perfilPai", fetch = FetchType.LAZY,orphanRemoval=true)
+	@OneToMany(mappedBy = "perfilPai", fetch = FetchType.LAZY)
 	private List<Perfil> perfilFilhos;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -95,6 +93,37 @@ public class Perfil implements Entidade, Serializable {
 
 	public void setPerfilPai(Perfil perfilPai) {
 		this.perfilPai = perfilPai;
+	}
+
+	@Override
+	public int compareTo(Perfil o) {
+
+		if (o.id == this.id) {
+			return 0;
+		} else if (o.id > this.id) {
+			return 1;
+		} else {
+			return -1;
+		}
+
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+
+		if (!(obj instanceof Perfil)) {
+
+			return false;
+		}
+
+		Perfil perfil = (Perfil) obj;
+
+		if (super.equals(perfil) && perfil.id != this.id) {
+
+			return false;
+		}
+
+		return true;
 	}
 
 }

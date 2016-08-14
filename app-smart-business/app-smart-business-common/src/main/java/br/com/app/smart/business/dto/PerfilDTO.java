@@ -1,10 +1,10 @@
 package br.com.app.smart.business.dto;
 
 import java.io.Serializable;
-import java.util.LinkedList;
 import java.util.List;
 
-public class PerfilDTO implements DTO, Serializable {
+
+public class PerfilDTO implements Comparable<PerfilDTO>, DTO, Serializable {
 
 	/**
 	 * 
@@ -71,5 +71,31 @@ public class PerfilDTO implements DTO, Serializable {
 		this.perfilPai = perfilPai;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof PerfilDTO)) {
+
+			return false;
+		}
+
+		PerfilDTO perfil = (PerfilDTO) obj;
+
+		if (perfil.id != this.id) {
+
+			return false;
+		}
+
+		return true;
+	}
+
+	public int compareTo(PerfilDTO o) {
+		if (o.id == this.id) {
+			return 0;
+		} else if (o.id > this.id) {
+			return 1;
+		} else {
+			return -1;
+		}
+	}
 
 }

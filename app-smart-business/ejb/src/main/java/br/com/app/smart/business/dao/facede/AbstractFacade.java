@@ -34,6 +34,13 @@ public abstract class AbstractFacade<T extends Entidade> implements IFacedeDAO {
 		return entity;
 	}
 
+	public void removerLista(List list) {
+
+		for (Object t : list) {
+			remover((Entidade) t);
+		}
+	}
+
 	public void remover(Entidade entity) {
 		getEntityManager().remove(getEntityManager().merge(entity));
 	}

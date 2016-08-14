@@ -3,6 +3,9 @@ package br.com.app.smart.business.service;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import javax.ejb.EJB;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -27,6 +30,7 @@ import br.com.app.smart.business.exception.InfraEstruturaException;
 import br.com.app.smart.business.exception.NegocioException;
 import br.com.app.smart.business.interfaces.IServicoLocalDAO;
 import br.com.app.smart.business.interfaces.IServicoRemoteDAO;
+import br.com.app.smart.business.model.Perfil;
 import br.com.app.smart.business.util.PackageUtil;
 
 /**
@@ -84,7 +88,6 @@ public class PerfilServiceImpTest {
 	@Test
 	public void crud() throws InfraEstruturaException, NegocioException {
 
-	
 		// testando inserao
 		PerfilDTO dto = PerfilBuilder.getInstanceDTO(TipoPerfilBuilder.INSTANCIA);
 		PerfilDTO dto2 = PerfilBuilder.getInstanceDTO(TipoPerfilBuilder.INSTANCIA);
@@ -100,7 +103,6 @@ public class PerfilServiceImpTest {
 		List<PerfilDTO> todos = local.bustarTodos();
 		Assert.assertNotNull(todos);
 		System.out.println("Buscar todos: " + todos.size());
-		
 
 		int range[] = { 0, 2 };
 		List<PerfilDTO> todosIntervalo = local.bustarPorIntervaloID(range);
@@ -118,18 +120,12 @@ public class PerfilServiceImpTest {
 		PerfilDTO dto4 = local.bustarPorID(resutaldoBusca3.getId());
 		Assert.assertNull(dto4);
 
-	
-
 	}
 
 	@Test
 	public void testeCriarPerfilFuncinalidadeVinculadoso() throws InfraEstruturaException, NegocioException {
 
 		// limpando a base
-		List<PerfilDTO> listaRemover = this.local.bustarTodos();
-		for (PerfilDTO item : listaRemover) {
-			this.local.remover(item);
-		}
 
 		System.out.println("sucesso testeCriarPerfilFuncinalidadeVinculadoso");
 	}
@@ -152,12 +148,18 @@ public class PerfilServiceImpTest {
 
 	@Test
 	public void testeArvore() throws InfraEstruturaException, NegocioException {
-		System.out.println("-----------------------testeArvore teste construcao---------------------");
-		// limpando a base
+
+		// exluindo os todos os nos
+
 		List<PerfilDTO> listaRemover = this.local.bustarTodos();
-		for (PerfilDTO item : listaRemover) {
-			this.local.remover(item);
+		for (PerfilDTO perfilDTO : listaRemover) {
+			System.out.println("Vou remover o id: " + perfilDTO.getId());
+			if (perfilDTO.getPerfilPai() != null) {
+				System.out.println("Com o id Pai : " + perfilDTO.getPerfilPai().getId());
+			}
 		}
+
+		System.out.println("-----------------------testeArvore teste construcao---------------------");
 		// do raiz null
 		// noRaiz
 		// / 1 \
@@ -170,125 +172,121 @@ public class PerfilServiceImpTest {
 		// / \ / \
 		// noSubRaizN2EE noSubRaizN2ED noSubRaizN2DE noSubRaizN2DD
 		// 4 5 6 7
-		PerfilDTO noRaiz = PerfilBuilder.getInstanceDTO(TipoPerfilBuilder.INSTANCIA);
-		
-		printDTO(noRaiz);
-		noRaiz = this.local.adiconar(noRaiz);
-		PerfilDTO resutaldoNoRaiz = this.local.bustarPorID(noRaiz.getId());
+		PerfilDTO noZero = PerfilBuilder.getInstanceDTO(TipoPerfilBuilder.INSTANCIA);
 
-		Assert.assertNotNull(resutaldoNoRaiz);
-		Assert.assertEquals(noRaiz.getId().longValue(), resutaldoNoRaiz.getId().longValue());
+		printDTO(noZero);
+		noZero = this.local.adiconar(noZero);
+		PerfilDTO resutaldoNoZero = this.local.bustarPorID(noZero.getId());
 
-		System.out.println("noRaiz id" + noRaiz.getId());
-		Assert.assertNull(noRaiz.getPerfilPai());
-		
+		Assert.assertNotNull(resutaldoNoZero);
+		Assert.assertEquals(noZero.getId().longValue(), resutaldoNoZero.getId().longValue());
+
+		System.out.println("noZero id" + resutaldoNoZero.getId());
+		Assert.assertNull(resutaldoNoZero.getPerfilPai());
+
 		System.out.println("--------------------------------------------------------------------------------");
 
+		PerfilDTO noUm = PerfilBuilder.getInstanceDTO(TipoPerfilBuilder.INSTANCIA);
+		noUm.setPerfilPai(noZero);
+		printDTO(noUm);
+		noUm = this.local.adiconar(noUm);
 
-		PerfilDTO noSubRaizN1E = PerfilBuilder.getInstanceDTO(TipoPerfilBuilder.INSTANCIA);
-		noSubRaizN1E.setPerfilPai(noRaiz);
-		printDTO(noSubRaizN1E);
-		noSubRaizN1E = this.local.adiconar(noSubRaizN1E);
+		PerfilDTO resutaldoNoUm = this.local.bustarPorID(noUm.getId());
 
-		PerfilDTO resutaldoNoSubRaizN1E = this.local.bustarPorID(noSubRaizN1E.getId());
+		Assert.assertNotNull(resutaldoNoUm);
+		Assert.assertEquals(noUm.getId().longValue(), resutaldoNoUm.getId().longValue());
 
-		Assert.assertNotNull(resutaldoNoSubRaizN1E);
-		Assert.assertEquals(noSubRaizN1E.getId().longValue(), resutaldoNoSubRaizN1E.getId().longValue());
+		System.out.println("resutaldoNoUm id" + resutaldoNoUm.getId());
+		if (resutaldoNoUm.getPerfilPai() == null) {
 
-		System.out.println("noSubRaizN1E id" + resutaldoNoSubRaizN1E.getId());
-		System.out.println("noSubRaizN1E idPai");
-		if(resutaldoNoSubRaizN1E.getPerfilPai()==null){
-			
-			System.out.println("noSubRaizN1E idPai null");
-		}else{
-			
-			System.out.println("noSubRaizN1E idPai" + resutaldoNoSubRaizN1E.getPerfilPai().getId());
+			System.out.println("resutaldoNoUm idPai null");
+		} else {
+
+			System.out.println("resutaldoNoUm idPai" + resutaldoNoUm.getPerfilPai().getId());
 		}
-		
-		System.out.println("--------------------------------------------------------------------------------");
-
-		PerfilDTO noSubRaizN1D = PerfilBuilder.getInstanceDTO(TipoPerfilBuilder.INSTANCIA);
-
-		noSubRaizN1D.setPerfilPai(noRaiz);
-		printDTO(noSubRaizN1D);
-		noSubRaizN1D = this.local.adiconar(noSubRaizN1D);
-
-		PerfilDTO resutaldoNoSubRaizN1D = this.local.bustarPorID(noSubRaizN1D.getId());
-
-		Assert.assertNotNull(resutaldoNoSubRaizN1D);
-		Assert.assertEquals(noSubRaizN1D.getId().longValue(), resutaldoNoSubRaizN1D.getId().longValue());
-
-		System.out.println("noSubRaizN1D id" + resutaldoNoSubRaizN1D.getId());
-		System.out.println("noSubRaizN1D idPai" + resutaldoNoSubRaizN1D.getPerfilPai() == null ? null
-				: resutaldoNoSubRaizN1D.getPerfilPai().getId());
 
 		System.out.println("--------------------------------------------------------------------------------");
 
+		PerfilDTO noDois = PerfilBuilder.getInstanceDTO(TipoPerfilBuilder.INSTANCIA);
 
-		PerfilDTO noSubRaizN2EE = PerfilBuilder.getInstanceDTO(TipoPerfilBuilder.INSTANCIA);
+		noDois.setPerfilPai(noZero);
+		printDTO(noDois);
+		noDois = this.local.adiconar(noDois);
 
-		noSubRaizN2EE.setPerfilPai(noSubRaizN1E);
-		printDTO(noSubRaizN2EE);
-		noSubRaizN2EE = this.local.adiconar(noSubRaizN2EE);
+		PerfilDTO resutaldoNoDois = this.local.bustarPorID(noDois.getId());
 
-		PerfilDTO resutaldoNoSubRaizN2EE = this.local.bustarPorID(noSubRaizN2EE.getId());
+		Assert.assertNotNull(resutaldoNoDois);
+		Assert.assertEquals(noDois.getId().longValue(), resutaldoNoDois.getId().longValue());
 
-		Assert.assertNotNull(resutaldoNoSubRaizN2EE);
-		Assert.assertEquals(noSubRaizN2EE.getId().longValue(), resutaldoNoSubRaizN2EE.getId().longValue());
-
-		System.out.println("noSubRaizN2EE id" + resutaldoNoSubRaizN2EE.getId());
-		System.out.println("noSubRaizN2EE idPai" + resutaldoNoSubRaizN2EE.getPerfilPai() == null ? null
-				: resutaldoNoSubRaizN2EE.getPerfilPai().getId());
-
-		System.out.println("--------------------------------------------------------------------------------");
-
-		PerfilDTO noSubRaizN2ED = PerfilBuilder.getInstanceDTO(TipoPerfilBuilder.INSTANCIA);
-		noSubRaizN2ED.setPerfilPai(noSubRaizN1E);
-		printDTO(noSubRaizN2ED);
-		noSubRaizN2ED = this.local.adiconar(noSubRaizN2ED);
-
-		PerfilDTO resutaldoNoSubRaizN2ED = this.local.bustarPorID(noSubRaizN2ED.getId());
-
-		Assert.assertNotNull(resutaldoNoSubRaizN2ED);
-		Assert.assertEquals(noSubRaizN2ED.getId().longValue(), resutaldoNoSubRaizN2ED.getId().longValue());
-
-		System.out.println("noSubRaizN2ED id" + resutaldoNoSubRaizN2ED.getId());
-		System.out.println("noSubRaizN2ED idPai" + resutaldoNoSubRaizN2ED.getPerfilPai() == null ? null
-				: resutaldoNoSubRaizN2ED.getPerfilPai().getId());
+		System.out.println("resutaldoNoDois id" + resutaldoNoDois.getId());
+		System.out.println("resutaldoNoDois idPai" + resutaldoNoDois.getPerfilPai() == null ? null
+				: resutaldoNoDois.getPerfilPai().getId());
 
 		System.out.println("--------------------------------------------------------------------------------");
 
+		PerfilDTO noTres = PerfilBuilder.getInstanceDTO(TipoPerfilBuilder.INSTANCIA);
 
-		PerfilDTO noSubRaizN2DE = PerfilBuilder.getInstanceDTO(TipoPerfilBuilder.INSTANCIA);
+		noTres.setPerfilPai(noUm);
+		printDTO(noTres);
+		noTres = this.local.adiconar(noTres);
 
-		noSubRaizN2DE.setPerfilPai(noSubRaizN1D);
-		printDTO(noSubRaizN2DE);
-		noSubRaizN2DE = this.local.adiconar(noSubRaizN2DE);
+		PerfilDTO resutaldoNoTres = this.local.bustarPorID(noTres.getId());
 
-		PerfilDTO resutaldoNoSubRaizN2DE = this.local.bustarPorID(noSubRaizN2DE.getId());
+		Assert.assertNotNull(resutaldoNoTres);
+		Assert.assertEquals(noTres.getId().longValue(), resutaldoNoTres.getId().longValue());
 
-		Assert.assertNotNull(resutaldoNoSubRaizN2DE);
-		Assert.assertEquals(noSubRaizN2DE.getId().longValue(), resutaldoNoSubRaizN2DE.getId().longValue());
-
-		System.out.println("noSubRaizN2DE id" + resutaldoNoSubRaizN2DE.getId());
-		System.out.println("noSubRaizN2DE idPai" + resutaldoNoSubRaizN2DE.getPerfilPai() == null ? null
-				: resutaldoNoSubRaizN2DE.getPerfilPai().getId());
+		System.out.println("resutaldoNoTres id" + resutaldoNoTres.getId());
+		System.out.println("resutaldoNoTres idPai" + resutaldoNoTres.getPerfilPai() == null ? null
+				: resutaldoNoTres.getPerfilPai().getId());
 
 		System.out.println("--------------------------------------------------------------------------------");
 
-		PerfilDTO noSubRaizN2DD = PerfilBuilder.getInstanceDTO(TipoPerfilBuilder.INSTANCIA);
-		noSubRaizN2DD.setPerfilPai(noSubRaizN1D);
-		printDTO(noSubRaizN2DD);
-		noSubRaizN2DD = this.local.adiconar(noSubRaizN2DD);
+		PerfilDTO noQuatro = PerfilBuilder.getInstanceDTO(TipoPerfilBuilder.INSTANCIA);
+		noQuatro.setPerfilPai(noUm);
+		printDTO(noQuatro);
+		noQuatro = this.local.adiconar(noQuatro);
 
-		PerfilDTO resutaldoNoSubRaizN2DD = this.local.bustarPorID(noSubRaizN2DD.getId());
+		PerfilDTO resutaldoNoQuatro = this.local.bustarPorID(noQuatro.getId());
 
-		Assert.assertNotNull(resutaldoNoSubRaizN2DD);
-		Assert.assertEquals(noSubRaizN2DD.getId().longValue(), resutaldoNoSubRaizN2DD.getId().longValue());
+		Assert.assertNotNull(resutaldoNoQuatro);
+		Assert.assertEquals(noQuatro.getId().longValue(), resutaldoNoQuatro.getId().longValue());
 
-		System.out.println("noSubRaizN2DD id" + resutaldoNoSubRaizN2DD.getId());
-		System.out.println("noSubRaizN2DD idPai" + resutaldoNoSubRaizN2DD.getPerfilPai() == null ? null
-				: resutaldoNoSubRaizN2DD.getPerfilPai().getId());
+		System.out.println("resutaldoNoQuatro id" + resutaldoNoQuatro.getId());
+		System.out.println("resutaldoNoQuatro idPai" + resutaldoNoQuatro.getPerfilPai() == null ? null
+				: resutaldoNoQuatro.getPerfilPai().getId());
+
+		System.out.println("--------------------------------------------------------------------------------");
+
+		PerfilDTO noCinco = PerfilBuilder.getInstanceDTO(TipoPerfilBuilder.INSTANCIA);
+
+		noCinco.setPerfilPai(noDois);
+		printDTO(noCinco);
+		noCinco = this.local.adiconar(noCinco);
+
+		PerfilDTO resutaldoNoCinco = this.local.bustarPorID(noCinco.getId());
+
+		Assert.assertNotNull(resutaldoNoCinco);
+		Assert.assertEquals(noCinco.getId().longValue(), resutaldoNoCinco.getId().longValue());
+
+		System.out.println("resutaldoNoCinco id" + resutaldoNoCinco.getId());
+		System.out.println("resutaldoNoCinco idPai" + resutaldoNoCinco.getPerfilPai() == null ? null
+				: resutaldoNoCinco.getPerfilPai().getId());
+
+		System.out.println("--------------------------------------------------------------------------------");
+
+		PerfilDTO noSeis = PerfilBuilder.getInstanceDTO(TipoPerfilBuilder.INSTANCIA);
+		noSeis.setPerfilPai(noDois);
+		printDTO(noSeis);
+		noSeis = this.local.adiconar(noSeis);
+
+		PerfilDTO resutaldoNoSeis = this.local.bustarPorID(noSeis.getId());
+
+		Assert.assertNotNull(resutaldoNoSeis);
+		Assert.assertEquals(noSeis.getId().longValue(), resutaldoNoSeis.getId().longValue());
+
+		System.out.println("resutaldoNoSeis id" + resutaldoNoSeis.getId());
+		System.out.println("resutaldoNoSeis idPai" + resutaldoNoSeis.getPerfilPai() == null ? null
+				: resutaldoNoSeis.getPerfilPai().getId());
 
 		System.out.println("-----------------------FIM---------------------");
 		System.out.println("-----------------------testeArvore - Teste Busca---------------------");
@@ -310,48 +308,62 @@ public class PerfilServiceImpTest {
 
 		for (PerfilDTO perfilDTO : resutaldoNoRaizArvore) {
 
-			if (perfilDTO.getId() == noRaiz.getId()) {
+			if (perfilDTO.getId() == noZero.getId()) {
 
 				List<PerfilDTO> listaFilhoNoRaiz = perfilDTO.getPerfilFilhos();
 				Assert.assertNotNull(listaFilhoNoRaiz);
 				System.out.println("Filho: listaFilhoNoRaiz.get(0)." + listaFilhoNoRaiz.get(0).getId());
 				System.out.println("Filho: listaFilhoNoRaiz.get(1)." + listaFilhoNoRaiz.get(1).getId());
-				Assert.assertEquals(perfilDTO.getPerfilFilhos().get(0).getId(), noSubRaizN1E.getId());
-				Assert.assertEquals(perfilDTO.getPerfilFilhos().get(1).getId(), noSubRaizN1D.getId());
+				Assert.assertEquals(perfilDTO.getPerfilFilhos().get(0).getId(), noUm.getId());
+				Assert.assertEquals(perfilDTO.getPerfilFilhos().get(1).getId(), noDois.getId());
 			}
 
-			if (perfilDTO.getId() == noSubRaizN1E.getId()) {
+			if (perfilDTO.getId() == noUm.getId()) {
 
 				List<PerfilDTO> listaFilhoNoRaiz = perfilDTO.getPerfilFilhos();
 				Assert.assertNotNull(listaFilhoNoRaiz);
 				System.out.println("Filho: noSubRaizN1E.get(0)." + listaFilhoNoRaiz.get(0).getId());
 				System.out.println("Filho: noSubRaizN1E.get(1)." + listaFilhoNoRaiz.get(1).getId());
-				Assert.assertEquals(listaFilhoNoRaiz.get(0).getId(), noSubRaizN2EE.getId());
-				Assert.assertEquals(listaFilhoNoRaiz.get(1).getId(), noSubRaizN2ED.getId());
+				Assert.assertEquals(listaFilhoNoRaiz.get(0).getId(), noTres.getId());
+				Assert.assertEquals(listaFilhoNoRaiz.get(1).getId(), noQuatro.getId());
 			}
 
-			if (perfilDTO.getId() == noSubRaizN1D.getId()) {
+			if (perfilDTO.getId() == noDois.getId()) {
 
 				List<PerfilDTO> listaFilhoNoRaiz = perfilDTO.getPerfilFilhos();
 				Assert.assertNotNull(listaFilhoNoRaiz);
-				
+
 				System.out.println("Filho: noSubRaizN1D.get(0)." + listaFilhoNoRaiz.get(0).getId());
 				System.out.println("Filho: noSubRaizN1D.get(1)." + listaFilhoNoRaiz.get(1).getId());
-				Assert.assertEquals(listaFilhoNoRaiz.get(0).getId(), noSubRaizN2DE.getId());
-				Assert.assertEquals(listaFilhoNoRaiz.get(1).getId(), noSubRaizN2DD.getId());
+				Assert.assertEquals(listaFilhoNoRaiz.get(0).getId(), noCinco.getId());
+				Assert.assertEquals(listaFilhoNoRaiz.get(1).getId(), noSeis.getId());
 			}
 
 		}
+
+			listaRemover = this.local.bustarTodos();
+
+			this.local.remover(noSeis);
+			this.local.remover(noCinco);
+			this.local.remover(noQuatro);
+			this.local.remover(noTres);
+			this.local.remover(noDois);
+			this.local.remover(noUm);
+			this.local.remover(noZero);
+			
+			listaRemover = this.local.bustarTodos();
+			
+			Assert.assertTrue(listaRemover.size()==0);
 
 	}
 
 	private void printDTO(PerfilDTO noSubRaizN1E) {
 		System.out.println("PerfilDTO id: " + noSubRaizN1E.getId());
-		if(noSubRaizN1E.getPerfilPai()!=null){
-			
+		if (noSubRaizN1E.getPerfilPai() != null) {
+
 			System.out.println("PerfilDTO idPai : " + noSubRaizN1E.getPerfilPai().getId());
-		}else{
-			
+		} else {
+
 			System.out.println("PerfilDTO idPai : null");
 		}
 	}
