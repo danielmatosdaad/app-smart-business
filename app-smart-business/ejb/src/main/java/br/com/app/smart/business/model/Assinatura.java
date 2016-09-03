@@ -10,8 +10,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import br.com.app.smart.business.dto.RegistroAuditoriaDTO;
-
 @Entity
 @XmlRootElement
 @Table(name = "assinatura")

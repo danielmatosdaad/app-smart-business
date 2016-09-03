@@ -24,10 +24,8 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import br.com.app.smart.business.databuilder.FuncionalidadeBuilder;
-
 import br.com.app.smart.business.databuilder.FuncionalidadeBuilder.TipoFuncionalidadeBuilder;
 import br.com.app.smart.business.dto.FuncionalidadeDTO;
-import br.com.app.smart.business.dto.GrupoFuncionalidadeDTO;
 import br.com.app.smart.business.dto.MetaDadoDTO;
 import br.com.app.smart.business.exception.InfraEstruturaException;
 import br.com.app.smart.business.exception.NegocioException;
@@ -178,6 +176,234 @@ public class FuncionalidadeServiceImpTest {
 		assertNotNull(this.remote);
 		System.out.println(this.remote);
 		System.out.println(this.remote.getClass());
+	}
+	
+	@Test
+	public void testeArvoreFuncionalidade() throws InfraEstruturaException, NegocioException{
+		
+		// exluindo os todos os nos
+		System.out.println("-----------------------testeArvore teste construcao---------------------");
+				List<FuncionalidadeDTO> listaRemover = this.local.bustarTodos();
+				for (FuncionalidadeDTO funcionalidadedto : listaRemover) {
+					System.out.println("Vou remover o id: " + funcionalidadedto.getId());
+					if (funcionalidadedto.getFuncionalidadePai() != null) {
+						System.out.println("Com o id Pai : " + funcionalidadedto.getFuncionalidadePai().getId());
+					}
+					this.local.remover(funcionalidadedto);
+				}
+
+			
+				// do raiz null
+				// noRaiz
+				// / 1 \
+				// / \
+				// / \
+				// / \
+				// noSubRaizN1E noSubRaizN1D
+				// / 2 \ / 3 \
+				// / \ / \
+				// / \ / \
+				// noSubRaizN2EE noSubRaizN2ED noSubRaizN2DE noSubRaizN2DD
+				// 4 5 6 7
+				FuncionalidadeDTO noZero = FuncionalidadeBuilder.getInstanceDTO(TipoFuncionalidadeBuilder.INSTANCIA);
+
+				printDTO(noZero);
+				noZero = this.local.adiconar(noZero);
+				FuncionalidadeDTO resutaldoNoZero = this.local.bustarPorID(noZero.getId());
+
+				Assert.assertNotNull(resutaldoNoZero);
+				Assert.assertEquals(noZero.getId().longValue(), resutaldoNoZero.getId().longValue());
+
+				System.out.println("noZero id" + resutaldoNoZero.getId());
+				Assert.assertNull(resutaldoNoZero.getFuncionalidadePai());
+
+				System.out.println("--------------------------------------------------------------------------------");
+
+				FuncionalidadeDTO noUm = FuncionalidadeBuilder.getInstanceDTO(TipoFuncionalidadeBuilder.INSTANCIA);
+				noUm.setFuncionalidadePai(noZero);
+				printDTO(noUm);
+				noUm = this.local.adiconar(noUm);
+
+				FuncionalidadeDTO resutaldoNoUm = this.local.bustarPorID(noUm.getId());
+
+				Assert.assertNotNull(resutaldoNoUm);
+				Assert.assertEquals(noUm.getId().longValue(), resutaldoNoUm.getId().longValue());
+
+				System.out.println("resutaldoNoUm id" + resutaldoNoUm.getId());
+				if (resutaldoNoUm.getFuncionalidadePai() == null) {
+
+					System.out.println("resutaldoNoUm idPai null");
+				} else {
+
+					System.out.println("resutaldoNoUm idPai" + resutaldoNoUm.getFuncionalidadePai().getId());
+				}
+
+				System.out.println("--------------------------------------------------------------------------------");
+
+				FuncionalidadeDTO noDois = FuncionalidadeBuilder.getInstanceDTO(TipoFuncionalidadeBuilder.INSTANCIA);
+
+				noDois.setFuncionalidadePai(noZero);
+				printDTO(noDois);
+				noDois = this.local.adiconar(noDois);
+
+				FuncionalidadeDTO resutaldoNoDois = this.local.bustarPorID(noDois.getId());
+
+				Assert.assertNotNull(resutaldoNoDois);
+				Assert.assertEquals(noDois.getId().longValue(), resutaldoNoDois.getId().longValue());
+
+				System.out.println("resutaldoNoDois id" + resutaldoNoDois.getId());
+				System.out.println("resutaldoNoDois idPai" + resutaldoNoDois.getFuncionalidadePai() == null ? null
+						: resutaldoNoDois.getFuncionalidadePai().getId());
+
+				System.out.println("--------------------------------------------------------------------------------");
+
+				FuncionalidadeDTO noTres = FuncionalidadeBuilder.getInstanceDTO(TipoFuncionalidadeBuilder.INSTANCIA);
+
+				noTres.setFuncionalidadePai(noUm);
+				printDTO(noTres);
+				noTres = this.local.adiconar(noTres);
+
+				FuncionalidadeDTO resutaldoNoTres = this.local.bustarPorID(noTres.getId());
+
+				Assert.assertNotNull(resutaldoNoTres);
+				Assert.assertEquals(noTres.getId().longValue(), resutaldoNoTres.getId().longValue());
+
+				System.out.println("resutaldoNoTres id" + resutaldoNoTres.getId());
+				System.out.println("resutaldoNoTres idPai" + resutaldoNoTres.getFuncionalidadePai() == null ? null
+						: resutaldoNoTres.getFuncionalidadePai().getId());
+
+				System.out.println("--------------------------------------------------------------------------------");
+
+				FuncionalidadeDTO noQuatro = FuncionalidadeBuilder.getInstanceDTO(TipoFuncionalidadeBuilder.INSTANCIA);
+				noQuatro.setFuncionalidadePai(noUm);
+				printDTO(noQuatro);
+				noQuatro = this.local.adiconar(noQuatro);
+
+				FuncionalidadeDTO resutaldoNoQuatro = this.local.bustarPorID(noQuatro.getId());
+
+				Assert.assertNotNull(resutaldoNoQuatro);
+				Assert.assertEquals(noQuatro.getId().longValue(), resutaldoNoQuatro.getId().longValue());
+
+				System.out.println("resutaldoNoQuatro id" + resutaldoNoQuatro.getId());
+				System.out.println("resutaldoNoQuatro idPai" + resutaldoNoQuatro.getFuncionalidadePai() == null ? null
+						: resutaldoNoQuatro.getFuncionalidadePai().getId());
+
+				System.out.println("--------------------------------------------------------------------------------");
+
+				FuncionalidadeDTO noCinco = FuncionalidadeBuilder.getInstanceDTO(TipoFuncionalidadeBuilder.INSTANCIA);
+
+				noCinco.setFuncionalidadePai(noDois);
+				printDTO(noCinco);
+				noCinco = this.local.adiconar(noCinco);
+
+				FuncionalidadeDTO resutaldoNoCinco = this.local.bustarPorID(noCinco.getId());
+
+				Assert.assertNotNull(resutaldoNoCinco);
+				Assert.assertEquals(noCinco.getId().longValue(), resutaldoNoCinco.getId().longValue());
+
+				System.out.println("resutaldoNoCinco id" + resutaldoNoCinco.getId());
+				System.out.println("resutaldoNoCinco idPai" + resutaldoNoCinco.getFuncionalidadePai() == null ? null
+						: resutaldoNoCinco.getFuncionalidadePai().getId());
+
+				System.out.println("--------------------------------------------------------------------------------");
+
+				FuncionalidadeDTO noSeis = FuncionalidadeBuilder.getInstanceDTO(TipoFuncionalidadeBuilder.INSTANCIA);
+				noSeis.setFuncionalidadePai(noDois);
+				printDTO(noSeis);
+				noSeis = this.local.adiconar(noSeis);
+
+				FuncionalidadeDTO resutaldoNoSeis = this.local.bustarPorID(noSeis.getId());
+
+				Assert.assertNotNull(resutaldoNoSeis);
+				Assert.assertEquals(noSeis.getId().longValue(), resutaldoNoSeis.getId().longValue());
+
+				System.out.println("resutaldoNoSeis id" + resutaldoNoSeis.getId());
+				System.out.println("resutaldoNoSeis idPai" + resutaldoNoSeis.getFuncionalidadePai() == null ? null
+						: resutaldoNoSeis.getFuncionalidadePai().getId());
+
+				System.out.println("-----------------------FIM---------------------");
+				System.out.println("-----------------------testeArvore - Teste Busca---------------------");
+
+				// do raiz null
+				// noRaiz
+				// / 1 \
+				// / \
+				// / \
+				// / \
+				// noSubRaizN1E noSubRaizN1D
+				// / 2 \ / 3 \
+				// / \ / \
+				// / \ / \
+				// noSubRaizN2EE noSubRaizN2ED noSubRaizN2DE noSubRaizN2DD
+				// 4 5 6 7
+
+				List<FuncionalidadeDTO> resutaldoNoRaizArvore = this.local.bustarTodos();
+
+				for (FuncionalidadeDTO funcionalidadedto : resutaldoNoRaizArvore) {
+
+					if (funcionalidadedto.getId() == noZero.getId()) {
+
+						List<FuncionalidadeDTO> listaFilhoNoRaiz = funcionalidadedto.getFuncionalidadeFilhos();
+						Assert.assertNotNull(listaFilhoNoRaiz);
+						System.out.println("Filho: listaFilhoNoRaiz.get(0)." + listaFilhoNoRaiz.get(0).getId());
+						System.out.println("Filho: listaFilhoNoRaiz.get(1)." + listaFilhoNoRaiz.get(1).getId());
+						Assert.assertEquals(funcionalidadedto.getFuncionalidadeFilhos().get(0).getId(), noUm.getId());
+						Assert.assertEquals(funcionalidadedto.getFuncionalidadeFilhos().get(1).getId(), noDois.getId());
+					}
+
+					if (funcionalidadedto.getId() == noUm.getId()) {
+
+						List<FuncionalidadeDTO> listaFilhoNoRaiz = funcionalidadedto.getFuncionalidadeFilhos();
+						Assert.assertNotNull(listaFilhoNoRaiz);
+						System.out.println("Filho: noSubRaizN1E.get(0)." + listaFilhoNoRaiz.get(0).getId());
+						System.out.println("Filho: noSubRaizN1E.get(1)." + listaFilhoNoRaiz.get(1).getId());
+						Assert.assertEquals(listaFilhoNoRaiz.get(0).getId(), noTres.getId());
+						Assert.assertEquals(listaFilhoNoRaiz.get(1).getId(), noQuatro.getId());
+					}
+
+					if (funcionalidadedto.getId() == noDois.getId()) {
+
+						List<FuncionalidadeDTO> listaFilhoNoRaiz = funcionalidadedto.getFuncionalidadeFilhos();
+						Assert.assertNotNull(listaFilhoNoRaiz);
+
+						System.out.println("Filho: noSubRaizN1D.get(0)." + listaFilhoNoRaiz.get(0).getId());
+						System.out.println("Filho: noSubRaizN1D.get(1)." + listaFilhoNoRaiz.get(1).getId());
+						Assert.assertEquals(listaFilhoNoRaiz.get(0).getId(), noCinco.getId());
+						Assert.assertEquals(listaFilhoNoRaiz.get(1).getId(), noSeis.getId());
+					}
+
+				}
+
+					listaRemover = this.local.bustarTodos();
+
+					this.local.remover(noSeis);
+					this.local.remover(noCinco);
+					this.local.remover(noQuatro);
+					this.local.remover(noTres);
+					this.local.remover(noDois);
+					this.local.remover(noUm);
+					this.local.remover(noZero);
+					
+					listaRemover = this.local.bustarTodos();
+					System.out.println("Tamanho da lista para remover: " + listaRemover.size());
+					Assert.assertTrue(listaRemover.size()==0);
+
+		
+		
+		
+	}
+
+	private void printDTO(FuncionalidadeDTO dto) {
+	
+		System.out.println("FuncionalidadeDTO id: " + dto.getId());
+		if (dto.getFuncionalidadePai() != null) {
+
+			System.out.println("Funcionalidade idPai : " + dto.getFuncionalidadePai().getId());
+		} else {
+
+			System.out.println("Funcionalidade idPai : null");
+		}
+		
 	}
 
 }

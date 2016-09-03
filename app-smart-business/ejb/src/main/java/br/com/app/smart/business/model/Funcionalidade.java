@@ -4,9 +4,11 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -38,12 +40,20 @@ public class Funcionalidade implements Entidade, Serializable {
 
 	@ManyToOne
 	private Perfil perfil;
-	
+
 	@ManyToOne
 	private GrupoFuncionalidade grupoFuncionalidade;
 
 	@OneToMany(mappedBy = "funcionalidade")
 	private List<MetaDado> metadados;
+	
+	
+	@OneToMany(mappedBy = "funcionalidadePai", fetch = FetchType.LAZY)
+	private List<Funcionalidade> funcionalidadeFilhos;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "funcionalidade_id")
+	private Funcionalidade funcionalidadePai;
 
 	public Long getId() {
 		return id;
@@ -76,5 +86,39 @@ public class Funcionalidade implements Entidade, Serializable {
 	public void setGrupoFuncionalidade(GrupoFuncionalidade grupoFuncionalidade) {
 		this.grupoFuncionalidade = grupoFuncionalidade;
 	}
+
+	public Perfil getPerfil() {
+		return perfil;
+	}
+
+	public void setPerfil(Perfil perfil) {
+		this.perfil = perfil;
+	}
+
+	public List<MetaDado> getMetadados() {
+		return metadados;
+	}
+
+	public void setMetadados(List<MetaDado> metadados) {
+		this.metadados = metadados;
+	}
+
+	public List<Funcionalidade> getFuncionalidadeFilhos() {
+		return funcionalidadeFilhos;
+	}
+
+	public void setFuncionalidadeFilhos(List<Funcionalidade> funcionalidadeFilhos) {
+		this.funcionalidadeFilhos = funcionalidadeFilhos;
+	}
+
+	public Funcionalidade getFuncionalidadePai() {
+		return funcionalidadePai;
+	}
+
+	public void setFuncionalidadePai(Funcionalidade funcionalidadePai) {
+		this.funcionalidadePai = funcionalidadePai;
+	}
+	
+	
 
 }

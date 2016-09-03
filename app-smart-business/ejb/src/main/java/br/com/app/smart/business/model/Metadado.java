@@ -123,4 +123,14 @@ public class MetaDado implements Entidade, Serializable {
 		this.urlTela = urlTela;
 	}
 
+	public Funcionalidade getFuncionalidade() {
+		return funcionalidade;
+	}
+
+	public void setFuncionalidade(Funcionalidade funcionalidade) {
+		this.funcionalidade = funcionalidade;
+	}
+	
+	
+
 }

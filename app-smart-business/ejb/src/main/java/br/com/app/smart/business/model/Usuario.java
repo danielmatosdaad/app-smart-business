@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity(name = "usuario")
 @XmlRootElement
 @Table(name = "usuario")
-public class Usuario implements Entidade,Serializable {
+public class Usuario implements Entidade, Serializable {
 
 	/**
 	 * 
@@ -39,6 +39,10 @@ public class Usuario implements Entidade,Serializable {
 	@Size(min = 1, max = 25, message = "Tamanho maximo de caracteres sao 25")
 	@Pattern(regexp = "[^0-9]*", message = "O sobrenome nao pode conter numeros")
 	private String sobrenome;
+
+	@NotNull
+	@Size(min = 1, max = 25, message = "Tamanho maximo de caracteres sao 25")
+	private String login;
 
 	@OneToMany
 	@JoinColumn(name = "contato_id")
@@ -107,6 +111,14 @@ public class Usuario implements Entidade,Serializable {
 
 	public void setRegistroAuditoria(RegistroAuditoria registroAuditoria) {
 		this.registroAuditoria = registroAuditoria;
+	}
+
+	public String getLogin() {
+		return login;
+	}
+
+	public void setLogin(String login) {
+		this.login = login;
 	}
 
 }

@@ -7,23 +7,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.logging.Logger;
-import br.com.app.smart.business.dto.ContatoDTO;
-import br.com.app.smart.business.dto.FuncionalidadeDTO;
-import br.com.app.smart.business.dto.MetaDadoDTO;
-import br.com.app.smart.business.dto.ParametroDTO;
-import br.com.app.smart.business.dto.RegistroAuditoriaDTO;
-import br.com.app.smart.business.dto.SenhaDTO;
-import br.com.app.smart.business.dto.StatusSenhaDTO;
-import br.com.app.smart.business.dto.StatusUsuarioDTO;
-import br.com.app.smart.business.dto.TelaDTO;
-import br.com.app.smart.business.dto.TipoContatoDTO;
-import br.com.app.smart.business.dto.TipoParametroDTO;
-import br.com.app.smart.business.dto.UsuarioDTO;
 import br.com.app.smart.business.exception.InfraEstruturaException;
 
 @Named

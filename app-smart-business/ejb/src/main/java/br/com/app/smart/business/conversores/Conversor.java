@@ -2,7 +2,6 @@ package br.com.app.smart.business.conversores;
 
 import org.modelmapper.ModelMapper;
 
-import br.com.app.smart.business.dto.DTO;
 import br.com.app.smart.business.exception.InfraEstruturaException;
 
 public class Conversor {

@@ -3,7 +3,6 @@ package br.com.app.smart.business.dto;
 import java.io.Serializable;
 import java.util.List;
 
-
 public class UsuarioDTO implements DTO, Serializable {
 
 	/**
@@ -14,6 +13,7 @@ public class UsuarioDTO implements DTO, Serializable {
 	private Long id;
 	private String nome;
 	private String sobrenome;
+	private String login;
 	private RegistroAuditoriaDTO registroAuditoria;
 	private List<ContatoDTO> contatos;
 	private List<SenhaDTO> senhas;
@@ -58,6 +58,7 @@ public class UsuarioDTO implements DTO, Serializable {
 	public void setSenhas(List<SenhaDTO> senhas) {
 		this.senhas = senhas;
 	}
+
 	public RegistroAuditoriaDTO getRegistroAuditoria() {
 		return registroAuditoria;
 	}
@@ -74,6 +75,12 @@ public class UsuarioDTO implements DTO, Serializable {
 		this.statusUsuario = statusUsuario;
 	}
 
-	
+	public String getLogin() {
+		return login;
+	}
+
+	public void setLogin(String login) {
+		this.login = login;
+	}
 
 }

@@ -20,6 +20,10 @@ public class FuncionalidadeDTO implements DTO, Serializable {
 
 	public List<MetaDadoDTO> metadados;
 
+	private List<FuncionalidadeDTO> funcionalidadeFilhos;
+
+	private FuncionalidadeDTO funcionalidadePai;
+
 	public Long getId() {
 		return id;
 	}
@@ -58,6 +62,22 @@ public class FuncionalidadeDTO implements DTO, Serializable {
 
 	public void setMetadados(List<MetaDadoDTO> metadados) {
 		this.metadados = metadados;
+	}
+
+	public List<FuncionalidadeDTO> getFuncionalidadeFilhos() {
+		return funcionalidadeFilhos;
+	}
+
+	public void setFuncionalidadeFilhos(List<FuncionalidadeDTO> funcionalidadeFilhos) {
+		this.funcionalidadeFilhos = funcionalidadeFilhos;
+	}
+
+	public FuncionalidadeDTO getFuncionalidadePai() {
+		return funcionalidadePai;
+	}
+
+	public void setFuncionalidadePai(FuncionalidadeDTO funcionalidadePai) {
+		this.funcionalidadePai = funcionalidadePai;
 	}
 
 }
